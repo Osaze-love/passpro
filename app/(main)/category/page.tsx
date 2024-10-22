@@ -1,3 +1,4 @@
+"use client";
 import {
   Table,
   TableBody,
@@ -8,10 +9,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 const page = () => {
+  const [isOpen, setisOpen] = useState(false);
+  const closeDialog = () => setisOpen(false);
+  const [isCategoryOpen, setisCategoryOpen] = useState(false);
+  const closeCategoryDialog = () => setisCategoryOpen(false);
+
   const categoryData = [
     {
       name: "Business Conferences",
@@ -63,7 +79,12 @@ const page = () => {
     <div className="px-[43px] py-[40px]">
       <section className="flex items-center justify-between mb-[57px]">
         <h3 className="text-[20px] font-semibold">Manage Category</h3>
-        <button className="bg-none border border-[#FC6435] rounded-[8px] w-[159px] text-[#FC6435] transition-all active:scale-95">
+        <button
+          onClick={() => {
+            setisCategoryOpen(true);
+          }}
+          className="bg-none border border-[#FC6435] rounded-[8px] w-[159px] text-[#FC6435] transition-all active:scale-95"
+        >
           <span className="text-lg">+</span>{" "}
           <span className="text-[20px]">Add New</span>
         </button>
@@ -111,7 +132,12 @@ const page = () => {
                       />
                       <span className="text-[14px]">Edit</span>
                     </button>
-                    <button className="bg-none border border-[#FC6435] rounded-[8px] p-[10px] text-[#FC6435] flex items-center space-x-[8px] transition-all active:scale-95">
+                    <button
+                      className="bg-none border border-[#FC6435] rounded-[8px] p-[10px] text-[#FC6435] flex items-center space-x-[8px] transition-all active:scale-95"
+                      onClick={() => {
+                        setisOpen(true);
+                      }}
+                    >
                       <Image
                         src="/icons/disablered.svg"
                         width={12}
@@ -133,6 +159,58 @@ const page = () => {
           </TableFooter>
         </Table>
       </section>
+
+      <Dialog open={isOpen} onOpenChange={closeDialog}>
+        <DialogContent className="sm:max-w-[500px]  top-[34%]">
+          <DialogTitle className="hidden"></DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
+          <div className="flex flex-col">
+            <p className="text-[20px] font-semibold pb-4">
+              Confirmation Alert!
+            </p>
+            <p className="text-[14px]  text-[#808080] py-4 border-t border-b">
+              Are you sure you want to disable this category?
+            </p>
+          </div>
+
+          <DialogFooter>
+            <div className="space-x-2">
+              <Button
+                className=" shadow-sm font-bold text-white bg-[#FC6435] hover:bg-[#FC6435] transition-all  active:scale-95"
+                type="submit"
+              >
+                No
+              </Button>
+              <Button
+                className=" shadow-sm font-bold text-[#FC6435] bg-transparent hover:bg-transparent transition-all active:scale-95 border border-[#FC6435] "
+                type="submit"
+              >
+                Yes
+              </Button>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={isCategoryOpen} onOpenChange={closeCategoryDialog}>
+        <DialogContent className="sm:max-w-[500px]  top-[34%]">
+          <DialogTitle className="hidden"></DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
+          <div className="flex flex-col">
+            <p className="text-[20px] font-semibold pb-4 border-b">
+              Add Category
+            </p>
+          </div>
+
+          <DialogFooter>
+            <Button
+              className=" shadow-sm w-full font-bold text-white bg-[#FC6435] hover:bg-[#FC6435] transition-all active:scale-95  py-[14px]"
+              type="submit"
+            >
+              Submit
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
