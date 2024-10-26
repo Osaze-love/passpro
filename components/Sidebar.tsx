@@ -3,7 +3,7 @@ import Image from "next/image";
 import React, { useEffect } from "react";
 import Link from "next/link";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { NavLinks } from "@/assets/links";
 import {
   Accordion,
@@ -14,6 +14,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const Sidebar = () => {
+  const router = useRouter();
   useEffect(() => {
     const hideChevronsInTrigger = () => {
       // Select all AccordionTrigger elements
@@ -72,15 +73,21 @@ const Sidebar = () => {
                 key={item.href}
                 type="single"
                 collapsible
-                className="w-full transition-all px-[19px]"
+                className={cn("w-full transition-all px-[19px]")}
               >
-                <AccordionItem className="border-none py-0 " value="item-1">
+                <AccordionItem
+                  className={cn(
+                    "border-none py-0",
+                    isActive && "bg-[#EE5627] rounded-[8px] "
+                  )}
+                  value="item-1"
+                >
                   <AccordionTrigger
                     className={cn(
-                      "accordion-trigger flex hover:no-underline items-center px-[12px] py-2 mx-1 w-full rounded-sm font-normal",
+                      "accordion-trigger flex hover:no-underline items-center px-[12px]  w-full rounded-sm font-normal",
                       isActive
-                        ? "bg-[#FFEEE6] text-[#F75803]"
-                        : "bg-none text-[#808080]"
+                        ? "bg-[#B1350F] text-white"
+                        : "bg-none text-white"
                     )}
                   >
                     <span
@@ -105,15 +112,15 @@ const Sidebar = () => {
                       />
                     </div>
                   </AccordionTrigger>
-                  <AccordionContent className="flex flex-col items-start px-8 py-2 gap-2 text-[#808080]">
+                  <AccordionContent className="flex flex-col items-start px-1  gap-2 text-[#808080]">
                     {item.sublink.map((sublink: any) => {
                       return (
                         <Link
                           key={sublink.href}
                           className={cn(
                             path === sublink.href
-                              ? "text-white text-[14px] font-semibold flex items-center space-x-2"
-                              : "text-white text-[14px] font-semibold flex items-center space-x-2"
+                              ? "text-white bg-[#BE4824] w-full text-[14px] py-[7px] font-semibold flex items-center space-x-2 pl-[20px]"
+                              : "text-white text-[14px] py-[7px] w-full font-semibold flex items-center space-x-2 pl-[20px]"
                           )}
                           href={sublink.href}
                         >
@@ -137,7 +144,7 @@ const Sidebar = () => {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center  py-2 px-[19px] mx-1 transition-all ease-in-out duration-500 rounded-sm text-white text-[14px] font-semibold",
+                "flex items-center my-2 py-2 px-[19px] mx-1 transition-all ease-in-out duration-500 rounded-sm text-white text-[14px] font-semibold",
                 isActive ? "bg-[#B1350F] text-white" : "bg-none text-white"
               )}
             >

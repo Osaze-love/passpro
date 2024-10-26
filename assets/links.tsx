@@ -31,12 +31,12 @@ export const NavLinks = [
     accordion: true,
     sublink: [
       {
-        title: "Subscription fee",
-        href: "/payments/subscription",
+        title: "Add Events",
+        href: "/events/add",
       },
       {
-        title: "Payment history",
-        href: "/payments/paymenthistory",
+        title: "Manage Events",
+        href: "/events/manage",
       },
     ],
   },
@@ -63,12 +63,16 @@ export const NavLinks = [
     accordion: true,
     sublink: [
       {
-        title: "Subscription fee",
-        href: "/payments/subscription",
+        title: "Add Organizer",
+        href: "/organizers/add",
       },
       {
-        title: "Payment history",
-        href: "/payments/paymenthistory",
+        title: "Manage Organizer",
+        href: "/organizers/manage",
+      },
+      {
+        title: "Notifications",
+        href: "/organizers/notifications",
       },
     ],
   },

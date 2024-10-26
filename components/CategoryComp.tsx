@@ -98,7 +98,7 @@ const CategoryComp = () => {
   ];
 
   return (
-    <div className="px-[43px] py-[40px]">
+    <div className="px-[43px] py-[40px] bg-[#fdf7f4]">
       <section className="flex items-center justify-between mb-[57px]">
         <h3 className="text-[20px] font-semibold">Manage Category</h3>
         <button
