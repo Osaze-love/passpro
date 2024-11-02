@@ -188,6 +188,9 @@ const Notifications = () => {
             1920x460 px
           </p>
         </div>
+        <div>
+           
+        </div>
       </section>
     </div>
   );

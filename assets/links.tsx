@@ -44,7 +44,7 @@ export const NavLinks = [
     name: "Manage Orders",
     icon: <OrdersIcon />,
     href: "/orders",
-    accordion: true,
+    accordion: false,
     sublink: [
       {
         title: "Subscription fee",
@@ -96,7 +96,7 @@ export const NavLinks = [
     name: "Withdrawals",
     icon: <WithdrawalIcon />,
     href: "/withdrawals",
-    accordion: true,
+    accordion: false,
     sublink: [
       {
         title: "Subscription fee",

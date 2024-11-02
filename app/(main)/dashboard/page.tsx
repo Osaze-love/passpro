@@ -16,8 +16,8 @@ const page = () => {
         <h2 className="text-[#FC6435] font-medium">Dashboard</h2>
       </div>
 
-      <div className="grid  2xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 gap-[16px]">
-        <div className="bg-white w-[328px] h-[120px] rounded-[8px] shadow-md p-[20px] space-y-4">
+      <div className="grid grid-cols-4  gap-[16px]">
+        <div className="bg-white w-[full] h-[120px] rounded-[8px] shadow-md p-[20px] space-y-4">
           <div className="flex items-center gap-[19px]">
             <Image
               src={"/logo/eventsall.svg"}
@@ -43,7 +43,7 @@ const page = () => {
             </Button>
           </div>
         </div>
-        <div className="bg-white w-[328px] h-[120px] rounded-[8px] shadow-md p-[20px] space-y-4">
+        <div className="bg-white w-[full] h-[120px] rounded-[8px] shadow-md p-[20px] space-y-4">
           <div className="flex items-center gap-[19px]">
             <Image
               src={"/logo/eventspending.svg"}
@@ -69,7 +69,7 @@ const page = () => {
             </Button>
           </div>
         </div>
-        <div className="bg-white w-[328px] h-[120px] rounded-[8px] shadow-md p-[20px] space-y-4">
+        <div className="bg-white w-[full] h-[120px] rounded-[8px] shadow-md p-[20px] space-y-4">
           <div className="flex items-center gap-[19px]">
             <Image
               src={"/logo/eventsapproved.svg"}
@@ -95,7 +95,7 @@ const page = () => {
             </Button>
           </div>
         </div>
-        <div className="bg-white w-[328px] h-[120px] rounded-[8px] shadow-md p-[20px] space-y-4">
+        <div className="bg-white w-[full] h-[120px] rounded-[8px] shadow-md p-[20px] space-y-4">
           <div className="flex items-center gap-[19px]">
             <Image
               src={"/logo/eventscancelled.svg"}
