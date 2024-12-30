@@ -1,9 +1,8 @@
 import React from "react";
 
-const OrderDetails = () => {
+const TicketDetails = () => {
   return (
     <div className="p-[30px] space-y-[30px]">
-      <h3 className=" font-semibold text-[30px] text-[#606060]">Order Details</h3>
       <section className="border w-full">
         <div className="flex items-center justify-between border-b">
           <p className="px-[40px] py-[40px]  font-semibold text-[#606060]">
@@ -68,4 +67,4 @@ const OrderDetails = () => {
   );
 };
 
-export default OrderDetails;
+export default TicketDetails;

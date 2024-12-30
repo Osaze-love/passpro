@@ -2,12 +2,17 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import useLogin from "@/hooks/login";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 
 const Login = () => {
   const router = useRouter();
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const { login } = useLogin();
+
   return (
     <div
       className="h-screen px-[20px] md:px-[70px] lg:px-[100px] py-[50px]"
@@ -28,13 +33,19 @@ const Login = () => {
           </h3>
           <div className="space-y-[20px] w-full">
             <Input
-              id="organizationName"
               placeholder="Email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value)
+              }}
               className=" py-[25px] focus-visible:ring-0 focus-visible:ring-transparent placeholder:text-[#8F8F8F] placeholder:text-[14px] px-[20px] shadow-sm"
             />
             <Input
-              id="organizationName"
               placeholder="Password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value)
+              }}
               className=" py-[25px] focus-visible:ring-0 focus-visible:ring-transparent placeholder:text-[#8F8F8F] placeholder:text-[14px] px-[20px] shadow-sm"
             />
             <div className="flex items-center justify-between">
@@ -54,8 +65,9 @@ const Login = () => {
             <Button
               type="submit"
               className="w-full py-[24px] shadow-sm font-bold text-white bg-[#FC6435] hover:bg-[#FC6435] transition-all active:scale-95"
-              onClick={() => {
-                router.push("/dashboard");
+              onClick={async() => {
+                await login(email, password)
+                // router.push("/dashboard");
               }}
             >
               Sign In
@@ -65,7 +77,7 @@ const Login = () => {
         <div className="hidden lg:block h-[100%] w-[100%] lg:w-[80%]">
           <img
             src={
-              "https://s3-alpha-sig.figma.com/img/feec/15ec/5fd2c3c836c27474214870920ec016ee?Expires=1731283200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=F4dsXyd4okZ7yJ9tSVrAZ4Rh1~Cjpgi9QU13K7ec3CRmpMMQRBNWLiiZKs~iRs4OUKkQZohcBwykiXoWkvLIak6AM7IcuOgq3qJL63bGBuD98C49HLVd6u5LfD3un8v6eEafw6ifqM8vSaEm3OHJirTRyHbxDoRJvOuwOaQ19Njoi9XhKrVIHwpZnXdrzE29A5xXGRp1OV9qdrhHvBRUTxPfzr~Fbb7XrUHOsOEW2SrYR3Wft8wEa2KuQfF-Vv5vZfQZG65AWjPQpftTYzDQSrGJpM6Du1MrHSTUB7lUSSR9YEaoLklFyJNKsfyxRBUBO5YBTMkXTamF7nQzWtjn4A__"
+              "/icons/Intersect.svg"
             }
             className="h-full w-full rounded-md object-cover"
             alt="loginImage"

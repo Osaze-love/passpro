@@ -1,6 +1,6 @@
 import React from "react";
 
-const OrderDetails = () => {
+const CouponDetails = () => {
   return (
     <div className="p-[30px] space-y-[30px]">
       <h3 className=" font-semibold text-[30px] text-[#606060]">Order Details</h3>
@@ -68,4 +68,4 @@ const OrderDetails = () => {
   );
 };
 
-export default OrderDetails;
+export default CouponDetails;

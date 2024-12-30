@@ -9,6 +9,8 @@ import {
   UserReportIcon,
   UsersIcon,
   WithdrawalIcon,
+  CouponIcon,
+  TicketIcon,
 } from "@/components/icons";
 
 export const NavLinks = [
@@ -57,6 +59,12 @@ export const NavLinks = [
     ],
   },
   {
+    name: "Manage Tickets",
+    icon: <TicketIcon />,
+    href: "/tickets",
+    accordion: false,
+  },
+  {
     name: "Organizers",
     icon: <OrganizersIcon />,
     href: "/organizers",
@@ -83,13 +91,18 @@ export const NavLinks = [
     accordion: true,
     sublink: [
       {
-        title: "Subscription fee",
-        href: "/payments/subscription",
+        title: "Add User",
+        href: "/users/add",
       },
       {
-        title: "Payment history",
-        href: "/payments/paymenthistory",
+        title: "Manage User",
+        href: "/users/manage",
       },
+      {
+        title: "Notifications",
+        href: "/users/notifications",
+      },
+      
     ],
   },
   {
@@ -112,7 +125,7 @@ export const NavLinks = [
     name: "Support Tickets",
     icon: <SupportIcon />,
     href: "/support",
-    accordion: true,
+    accordion: false,
     sublink: [
       {
         title: "Subscription fee",
@@ -125,20 +138,42 @@ export const NavLinks = [
     ],
   },
   {
+    name: "Organizer Reports",
+    icon: <UserReportIcon />,
+    href: "/organizerreport",
+    accordion: false,
+    // sublink: [
+    //   {
+    //     title: "Subscription fee",
+    //     href: "/payments/subscription",
+    //   },
+    //   {
+    //     title: "Payment history",
+    //     href: "/payments/paymenthistory",
+    //   },
+    // ],
+  },
+  {
     name: "User Reports",
     icon: <UserReportIcon />,
-    href: "/report",
-    accordion: true,
-    sublink: [
-      {
-        title: "Subscription fee",
-        href: "/payments/subscription",
-      },
-      {
-        title: "Payment history",
-        href: "/payments/paymenthistory",
-      },
-    ],
+    href: "/userreport",
+    accordion: false,
+    // sublink: [
+    //   {
+    //     title: "Subscription fee",
+    //     href: "/payments/subscription",
+    //   },
+    //   {
+    //     title: "Payment history",
+    //     href: "/payments/paymenthistory",
+    //   },
+    // ],
+  },
+  {
+    name: "Coupon",
+    icon: <CouponIcon />,
+    href: "/coupon",
+    accordion: false,
   },
   {
     name: "Extras",
