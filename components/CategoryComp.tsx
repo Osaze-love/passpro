@@ -16,16 +16,24 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import useCategory from "@/hooks/category";
+import BarLoader from "react-spinners/BarLoader";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 const CategoryComp = () => {
+  const { getCategories, loading, toggleCategoryStatus, createCategory } = useCategory();
+  const {categories} = useSelector((state: RootState) => state.category);
   const [isOpen, setisOpen] = useState(false);
   const [isCategoryOpen, setisCategoryOpen] = useState(false);
   const [file, setFile] = useState<any>(null);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [categoryId, setCategoryId] = useState<any>(0);
+  const [categoryName, setCategoryName] = useState<string>('');
 
   const closeDialog = () => setisOpen(false);
   const closeCategoryDialog = () => {
@@ -33,6 +41,9 @@ const CategoryComp = () => {
     setFile(null);
     setImageSrc(null);
   };
+  useEffect(() => {
+    getCategories();
+  },[])
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -85,20 +96,16 @@ const CategoryComp = () => {
     };
   };
 
-  const categoryData = [
-    { name: "Business Conferences", event: "23", status: "Enabled" },
-    { name: "Business Conferences", event: "23", status: "Enabled" },
-    { name: "Business Conferences", event: "23", status: "Enabled" },
-    { name: "Business Conferences", event: "23", status: "Enabled" },
-    { name: "Business Conferences", event: "23", status: "Enabled" },
-    { name: "Business Conferences", event: "23", status: "Enabled" },
-    { name: "Business Conferences", event: "23", status: "Enabled" },
-    { name: "Business Conferences", event: "23", status: "Enabled" },
-    { name: "Business Conferences", event: "23", status: "Enabled" },
-  ];
 
   return (
     <div className="px-[43px] py-[40px] bg-[#fdf7f4]">
+       {loading && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-85">
+     
+        <BarLoader color="#FC6435" />
+       
+    </div> 
+  )}
       <section className="flex items-center justify-between mb-[57px]">
         <h3 className="text-[20px] font-semibold">Manage Category</h3>
         <button
@@ -129,15 +136,15 @@ const CategoryComp = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {categoryData.map((data, index) => (
+            {categories?.map((data, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium h-[75px] text-[#606060] border-l">
-                  {data.name}
+                  {data?.category_name}
                 </TableCell>
-                <TableCell className="text-[#606060]">{data.event}</TableCell>
+                <TableCell className="text-[#606060]">{data?.events_count}</TableCell>
                 <TableCell>
                   <p className="w-max text-[#28C76F] rounded-[20px] bg-[#E9F9F0] p-[8px]">
-                    {data.status}
+                    {data?.status}
                   </p>
                 </TableCell>
                 <TableCell className="text-right border-r w-[200px]">
@@ -153,7 +160,9 @@ const CategoryComp = () => {
                     </button>
                     <button
                       className="bg-none border border-[#FC6435] rounded-[8px] p-[10px] text-[#FC6435] flex items-center space-x-[8px] transition-all active:scale-95"
-                      onClick={() => setisOpen(true)}
+                      onClick={() => {
+                        setCategoryId(data?.id);
+                        setisOpen(true)}}
                     >
                       <Image
                         src="/icons/disablered.svg"
@@ -185,10 +194,20 @@ const CategoryComp = () => {
 
           <DialogFooter>
             <div className="space-x-2">
-              <Button className="shadow-sm font-bold text-white bg-[#FC6435] hover:bg-[#FC6435] transition-all  active:scale-95">
+              <Button
+              onClick={() => {
+                setCategoryId(0);
+                closeDialog();
+              }}
+              className="shadow-sm font-bold text-white bg-[#FC6435] hover:bg-[#FC6435] transition-all  active:scale-95">
                 No
               </Button>
-              <Button className="shadow-sm font-bold text-[#FC6435] bg-transparent hover:bg-transparent transition-all active:scale-95 border border-[#FC6435]">
+              <Button
+              onClick={async() => {
+                closeDialog();
+                await toggleCategoryStatus(categoryId);
+              }}
+              className="shadow-sm font-bold text-[#FC6435] bg-transparent hover:bg-transparent transition-all active:scale-95 border border-[#FC6435]">
                 Yes
               </Button>
             </div>
@@ -256,13 +275,22 @@ const CategoryComp = () => {
                   <span className="text-[#F24455] text-md">*</span>
                 </div>
               </Label>
-              <Input id="category" className=" py-[8px] px-4 shadow-sm" />
+              <Input id="category"
+               value={categoryName}
+               onChange={(e) => {
+                setCategoryName(e.target.value)
+               }}
+              className="focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 py-[8px] px-4 shadow-sm" />
             </div>
           </div>
 
           <DialogFooter className="mt-[35px]">
             <Button
-              type="submit"
+            onClick={async() => {
+              await createCategory(categoryName, imageSrc)
+              console.log(categoryName, imageSrc);
+              
+            }}
               className="w-full py-[10px] shadow-sm font-bold text-white bg-[#FC6435] hover:bg-[#FC6435] transition-all active:scale-95"
             >
               Submit

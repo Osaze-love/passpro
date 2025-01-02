@@ -6,12 +6,14 @@ import useLogin from "@/hooks/login";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import BarLoader from 'react-spinners/BarLoader'
+
 
 const Login = () => {
   const router = useRouter();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const { login } = useLogin();
+  const { login, loading } = useLogin();
 
   return (
     <div
@@ -20,6 +22,13 @@ const Login = () => {
         background: `linear-gradient(to right, #fdf7f4 75%, #FC6435 25%)`,
       }}
     >
+        {loading && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-85">
+     
+        <BarLoader color="#FC6435" />
+       
+    </div> 
+  )}
       <Image
         src="/logo/logored.svg"
         height={47}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
 import "./globals.css";
 import ClientProvider from "./ClientProvider";
+import { Toaster } from "@/components/ui/toaster";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -23,6 +24,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={raleway.className}>
       <ClientProvider>{children}
+      <Toaster />
         </ClientProvider>
       </body>
     </html>

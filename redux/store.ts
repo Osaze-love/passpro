@@ -9,12 +9,15 @@ import {
   PURGE,
   REGISTER,
 } from "redux-persist";
+import { userslice } from "./slices/userslice";
+import { categoryslice } from "./slices/categoryslice";
 
 // Import your slice correctly
 
 // Combine all reducers
 const rootReducer = combineReducers({
- 
+  user: userslice.reducer,
+  category: categoryslice.reducer,
 });
 
 // Persist configuration

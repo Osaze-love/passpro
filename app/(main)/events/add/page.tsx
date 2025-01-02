@@ -156,7 +156,7 @@ const AddEvents = () => {
        
       </section> */}
 
-{/* <section className="bg-white p-[40px] rounded-[8px] shadow-sm">
+<section className="bg-white p-[40px] rounded-[8px] shadow-sm">
         <div className="border-b border-b-[#D9D9D9] py-2 mb-[20px]">
           <p className="text-[20px] font-semibold text-[#343434]">Gallery</p>
         </div>
@@ -202,9 +202,9 @@ const AddEvents = () => {
 
             </div>
        
-      </section> */}
+      </section>
 
-      <section className="bg-white p-[40px] rounded-[8px] shadow-sm">
+      {/* <section className="bg-white p-[40px] rounded-[8px] shadow-sm">
       <div className="flex items-center justify-between border-b border-b-[#D9D9D9] py-2 mb-[20px]">
           <p className="text-[20px] font-semibold text-[#343434]">Tickets</p>
           <button
@@ -284,7 +284,7 @@ const AddEvents = () => {
   </TableBody>
 </Table>
 </section>
-      </section>
+      </section> */}
   </div>
   )
 

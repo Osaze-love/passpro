@@ -4,12 +4,12 @@
   import { useRouter } from "next/navigation";
   import { useState } from "react";
   import { useDispatch, useSelector } from "react-redux";
-import { toast } from "./use-toast";
+import { updateUserDetail, updateUserToken } from "@/redux/slices/userslice";
 // import { updateUser } from "@/redux/slices/adminslice";
   
   const useLogin = () => {
     const base_url = process.env.NEXT_PUBLIC_BASE_URL_LOGIN;
-    // const broadcast = useSelector((state: RootState) => state.broadcast);
+    // const {userToken, usersDetail} = useSelector((state: RootState) => state.user);
     const dispatch = useDispatch<AppDispatch>();
     const router = useRouter();
   
@@ -17,12 +17,14 @@ import { toast } from "./use-toast";
     
     const login = async (email?:string, password?:string ) => {
       setLoading(true);
-      try {
+      try {  
         const response = await axios.post(`${base_url}/login`, {
-          "email": email,
-          "password": password
-      });
-    //   dispatch(updateUser(response?.data?.response?.admin));
+          identifier: email,
+          password: password
+      });    
+      dispatch(updateUserDetail(response?.data?.user))
+      dispatch(updateUserToken(response?.data?.token))
+      router.push('/dashboard')      
       } catch (error: any) {
         // toast({
         //   variant: "destructive",

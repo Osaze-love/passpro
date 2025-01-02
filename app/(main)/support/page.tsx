@@ -11,10 +11,18 @@ import {
     TableHeader,
     TableRow,
   } from "@/components/ui/table";
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import useSupport from '@/redux/slices/supportslice';
+import BarLoader from 'react-spinners/BarLoader';
 
 const page = () => {
-    
+  const { getSupportTickets, loading } = useSupport();
+     
+  useEffect(() => {
+        getSupportTickets();
+    },[]);
+
+
     const ticketData = [
         {
             subject: '[Ticket#735642] teste',
@@ -65,6 +73,13 @@ const page = () => {
       };
   return (
     <div className="px-[43px] py-[40px] bg-[#fdf7f4]">
+       {loading && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-85">
+     
+        <BarLoader color="#FC6435" />
+       
+    </div> 
+  )}
        <section className="flex items-center justify-between mb-[32px]">
         <h3 className="text-[20px] font-semibold">{activeTab}</h3>
         <div className="flex w-[277px] h-[48px] items-center border rounded-[8px]  mx-[33px] bg-white">
