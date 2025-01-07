@@ -11,6 +11,11 @@ import {
 } from "redux-persist";
 import { userslice } from "./slices/userslice";
 import { categoryslice } from "./slices/categoryslice";
+import { supportslice } from "./slices/supportslice";
+import { orderslice } from "./slices/orderslice";
+import { withdrawslice } from "./slices/withdrawslice";
+import { organizerslice } from "./slices/organizerslice";
+import { eventslice } from "./slices/eventslice";
 
 // Import your slice correctly
 
@@ -18,6 +23,11 @@ import { categoryslice } from "./slices/categoryslice";
 const rootReducer = combineReducers({
   user: userslice.reducer,
   category: categoryslice.reducer,
+  support: supportslice.reducer,
+  order: orderslice.reducer,
+  withdraw: withdrawslice.reducer,
+  organizer: organizerslice.reducer,
+  event: eventslice.reducer,
 });
 
 // Persist configuration

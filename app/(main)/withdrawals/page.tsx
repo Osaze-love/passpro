@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -13,8 +13,21 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useRouter } from "next/navigation";
+import useWithdraw from "@/hooks/withdraw";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import BarLoader from "react-spinners/BarLoader";
+import { updateActiveWithdrawal } from "@/redux/slices/withdrawslice";
 
 const Withdrawals = () => {
+  const { getWithdrawals, loading } = useWithdraw();
+  const {withdrawals} = useSelector((state: RootState) => state.withdraw);
+  const router = useRouter();
+  const dispatch = useDispatch();
+     
+  useEffect(() => {
+     getWithdrawals();
+    },[]);
   const withdrawalsData = [
     {
       gateway: "Bank",
@@ -125,14 +138,31 @@ const Withdrawals = () => {
       status: "Pending",
     },
   ];
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState("All");
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
   };
+
+   useEffect(() => {
+          const search = activeTab === "All"
+            ? undefined
+            : activeTab === "Approved"
+            ? "approved"
+            : activeTab === "Pending"
+            ? "pending"
+            : "rejected"
+          getWithdrawals(search);
+        }, [activeTab]);
   return (
     <div className="px-[43px] py-[40px] bg-[#fdf7f4]">
+       {loading && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-85">
+     
+        <BarLoader color="#FC6435" />
+       
+    </div> 
+  )}
       <section className="flex items-center justify-between mb-[10px]">
         <h3 className="text-[20px] font-semibold">Withdrawals</h3>
         <div className="flex items-center space-x-[24px]">
@@ -192,7 +222,7 @@ const Withdrawals = () => {
               alt="logousers"
             />
             <div className="gap-[8px]">
-              <p className="font-medium ">₦502,000.25</p>
+              <p className="font-medium ">₦-</p>
               <h2 className="font-medium text-[14px] text-[#8F8F8F]">
                 Approved Withdrawal
               </h2>
@@ -216,7 +246,7 @@ const Withdrawals = () => {
               alt="logousers"
             />
             <div className="gap-[8px]">
-              <p className="font-medium ">₦502,000.25</p>
+              <p className="font-medium ">₦-</p>
               <h2 className="font-medium text-[14px] text-[#8F8F8F]">
                 Pending Withdrawal
               </h2>
@@ -240,7 +270,7 @@ const Withdrawals = () => {
               alt="logousers"
             />
             <div className="gap-[8px]">
-              <p className="font-medium ">₦502,000.25</p>
+              <p className="font-medium ">₦-</p>
               <h2 className="font-medium text-[14px] text-[#8F8F8F]">
                 Rejected Withdrawal
               </h2>
@@ -268,7 +298,7 @@ const Withdrawals = () => {
                 Initiated
               </TableHead>
               <TableHead className="text-white text-center font-extrabold">
-                User Type
+                Type
               </TableHead>
               <TableHead className="text-white text-center font-extrabold">
                 Username
@@ -277,7 +307,7 @@ const Withdrawals = () => {
                 Amount
               </TableHead>
               <TableHead className="text-white text-center font-extrabold">
-                Conversion
+                Charge
               </TableHead>
               <TableHead className="text-white text-center font-extrabold">
                 Status
@@ -291,47 +321,48 @@ const Withdrawals = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {withdrawalsData.map((data, index) => (
+            {withdrawals?.map((data, index) => (
               <TableRow key={index}>
                 <TableCell className=" h-[75px] text-[#606060]  border-l ">
-                  <p className="text-[#FC6435]">{data.gateway}</p>
-                  <p className="text-[14px]">{data.transaction}</p>
+                  <p className="text-[#FC6435]"> Bank</p>
+                  <p className="text-[14px]">{data?.bank_name}</p>
                 </TableCell>
                 <TableCell className="text-[#606060] text-center">
-                  {data.initiated}
-                  <p className="text-[14px]">{data.months}</p>
+                  {data?.initiated_at}
                 </TableCell>
                 <TableCell className="text-[#606060] font-medium text-center">
-                  {data.type}
+                  {data?.type}
                 </TableCell>
                 <TableCell className="text-[#606060] text-center">
-                  {data.username}
-                  <p className="text-[14px] text-[#FC6435]">@{data.username}</p>
+                  {data?.user_full_name}
+                  {/* <p className="text-[14px] text-[#FC6435]">@{data?.username}</p> */}
                 </TableCell>
                 <TableCell className="text-[#606060]  text-center">
                   <p>
-                    {data.amount} -{" "}
-                    <span className="text-[#FF3B30] font-semibold">
-                      {data.total}
-                    </span>
+                    {data?.amount}
                   </p>
-                  <p className="text-[14px] font-semibold">{data.total}</p>
                 </TableCell>
                 <TableCell className="text-center">
-                  <p>
-                    {data.conversion} - <span className="">{data.total}</span>
-                  </p>
-                  <p className="text-[14px]">{data.total}</p>
+                  
+                  <p className="text-[14px]">{data?.charge}</p>
                 </TableCell>
                 <TableCell>
-                  <p className="w-[99px]  rounded-[20px] flex items-center justify-center bg-[#f5bcbc] border border-[#EB2222] p-[5px]">
-                    {data.status}
-                  </p>
+                  {data?.status === 'approved' && <p className="w-[99px]  rounded-[20px] flex items-center justify-center bg-[#e4f5e9] border border-[#4AC971] text-[#4AC971] p-[5px]">
+                    {data?.status}
+                  </p>}
+                  {data?.status === 'pending' && <p className="w-[99px]  rounded-[20px] flex items-center justify-center bg-[#f0dcca] border border-[#FF9F43] text-[#FF9F43] p-[5px]">
+                    {data?.status}
+                  </p>}
+                  {data?.status === 'rejected' && <p className="w-[99px]  rounded-[20px] flex items-center justify-center bg-[#f1dada] border border-[#EB2222] text-[#EB2222] p-[5px]">
+                    {data?.status}
+                  </p>}
+                 
                 </TableCell>
                 <TableCell className="text-right border-r ">
                   <button
                     className="bg-none border border-[#FC6435] rounded-[8px] p-[10px] text-[#FC6435] flex items-center space-x-[8px] transition-all active:scale-95"
                     onClick={() => {
+                      dispatch(updateActiveWithdrawal(data));
                       router.push("/withdrawals/details");
                     }}
                   >

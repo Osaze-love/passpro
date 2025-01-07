@@ -36,6 +36,7 @@ export const NavLinks = [
         title: "Add Events",
         href: "/events/add",
       },
+      
       {
         title: "Manage Events",
         href: "/events/manage",
@@ -58,12 +59,12 @@ export const NavLinks = [
       },
     ],
   },
-  {
-    name: "Manage Tickets",
-    icon: <TicketIcon />,
-    href: "/tickets",
-    accordion: false,
-  },
+  // {
+  //   name: "Manage Tickets",
+  //   icon: <TicketIcon />,
+  //   href: "/tickets",
+  //   accordion: false,
+  // },
   {
     name: "Organizers",
     icon: <OrganizersIcon />,
@@ -84,27 +85,27 @@ export const NavLinks = [
       },
     ],
   },
-  {
-    name: "Users",
-    icon: <UsersIcon />,
-    href: "/users",
-    accordion: true,
-    sublink: [
-      {
-        title: "Add User",
-        href: "/users/add",
-      },
-      {
-        title: "Manage User",
-        href: "/users/manage",
-      },
-      {
-        title: "Notifications",
-        href: "/users/notifications",
-      },
+  // {
+  //   name: "Users",
+  //   icon: <UsersIcon />,
+  //   href: "/users",
+  //   accordion: true,
+  //   sublink: [
+  //     // {
+  //     //   title: "Add User",
+  //     //   href: "/users/add",
+  //     // },
+  //     {
+  //       title: "Manage User",
+  //       href: "/users/manage",
+  //     },
+  //     // {
+  //     //   title: "Notifications",
+  //     //   href: "/users/notifications",
+  //     // },
       
-    ],
-  },
+  //   ],
+  // },
   {
     name: "Withdrawals",
     icon: <WithdrawalIcon />,
@@ -137,58 +138,58 @@ export const NavLinks = [
       },
     ],
   },
-  {
-    name: "Organizer Reports",
-    icon: <UserReportIcon />,
-    href: "/organizerreport",
-    accordion: false,
-    // sublink: [
-    //   {
-    //     title: "Subscription fee",
-    //     href: "/payments/subscription",
-    //   },
-    //   {
-    //     title: "Payment history",
-    //     href: "/payments/paymenthistory",
-    //   },
-    // ],
-  },
-  {
-    name: "User Reports",
-    icon: <UserReportIcon />,
-    href: "/userreport",
-    accordion: false,
-    // sublink: [
-    //   {
-    //     title: "Subscription fee",
-    //     href: "/payments/subscription",
-    //   },
-    //   {
-    //     title: "Payment history",
-    //     href: "/payments/paymenthistory",
-    //   },
-    // ],
-  },
-  {
-    name: "Coupon",
-    icon: <CouponIcon />,
-    href: "/coupon",
-    accordion: false,
-  },
-  {
-    name: "Extras",
-    icon: <ExtrasIcon />,
-    href: "/extras",
-    accordion: true,
-    sublink: [
-      {
-        title: "Subscription fee",
-        href: "/payments/subscription",
-      },
-      {
-        title: "Payment history",
-        href: "/payments/paymenthistory",
-      },
-    ],
-  },
+  // {
+  //   name: "Organizer Reports",
+  //   icon: <UserReportIcon />,
+  //   href: "/organizerreport",
+  //   accordion: false,
+  //   // sublink: [
+  //   //   {
+  //   //     title: "Subscription fee",
+  //   //     href: "/payments/subscription",
+  //   //   },
+  //   //   {
+  //   //     title: "Payment history",
+  //   //     href: "/payments/paymenthistory",
+  //   //   },
+  //   // ],
+  // },
+  // {
+  //   name: "User Reports",
+  //   icon: <UserReportIcon />,
+  //   href: "/userreport",
+  //   accordion: false,
+  //   // sublink: [
+  //   //   {
+  //   //     title: "Subscription fee",
+  //   //     href: "/payments/subscription",
+  //   //   },
+  //   //   {
+  //   //     title: "Payment history",
+  //   //     href: "/payments/paymenthistory",
+  //   //   },
+  //   // ],
+  // },
+  // {
+  //   name: "Coupon",
+  //   icon: <CouponIcon />,
+  //   href: "/coupon",
+  //   accordion: false,
+  // },
+  // {
+  //   name: "Extras",
+  //   icon: <ExtrasIcon />,
+  //   href: "/extras",
+  //   accordion: true,
+  //   sublink: [
+  //     {
+  //       title: "Subscription fee",
+  //       href: "/payments/subscription",
+  //     },
+  //     {
+  //       title: "Payment history",
+  //       href: "/payments/paymenthistory",
+  //     },
+  //   ],
+  // },
 ];

@@ -11,8 +11,14 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import useWithdraw from "@/hooks/withdraw";
+import BarLoader from "react-spinners/BarLoader";
 
 const Details = () => {
+  const {activeWithdrawal} = useSelector((state: RootState) => state.withdraw);
+  const { approveWithdrawal, rejectWithdrawal, loading } = useWithdraw()
   const [isAcceptOpen, setisAcceptOpen] = useState(false);
   const closeAcceptDialog = () => setisAcceptOpen(false);
   const [isRejectOpen, setisRejectOpen] = useState(false);
@@ -20,9 +26,16 @@ const Details = () => {
 
   return (
     <div className="px-[43px] py-[40px] bg-[#fdf7f4]">
+       {loading && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-85">
+     
+        <BarLoader color="#FC6435" />
+       
+    </div> 
+  )}
       <section className=" mb-[32px]">
         <h3 className="text-[20px] font-semibold">
-          Username Withdraw Requested $900.00
+       {activeWithdrawal?.user_full_name} Requested  
         </h3>
       </section>
 
@@ -35,86 +48,68 @@ const Details = () => {
             <div className="border rounded-[8px]">
               <div className="flex items-center justify-between py-[16px] px-[32px] border-b">
                 <p className="text-[14px] text-[#343434] font-semibold">
-                  Title
+                  Date
                 </p>
                 <p className="text-[14px] text-[#343434] font-bold">
-                  Gustavo Lima
+                {activeWithdrawal?.initiated_at}
                 </p>
               </div>
               <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
-                <p className="text-[14px] text-[#343434] font-semibold">Type</p>
-                <p className="text-[14px] text-[#343434] font-bold">Offline</p>
+                <p className="text-[14px] text-[#343434] font-semibold">Trx Number</p>
+                <p className="text-[14px] text-[#343434] font-bold">-</p>
               </div>
               <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
                 <p className="text-[14px] text-[#343434] font-semibold">
-                  Organizer
+                  User Type
                 </p>
-                <p className="text-[#FC6435] text-[14px] font-bold">
-                  On network solutions pvt ltd
+                <p className=" text-[14px] font-bold">
+                  {activeWithdrawal?.type}
                 </p>
               </div>
               <div className="flex items-center justify-between py-[16px] px-[32px] border-b">
                 <p className="text-[14px] text-[#343434] font-semibold">
-                  Category
+                  Full Name
                 </p>
-                <p className="text-[14px] text-[#343434] font-bold">
-                  Car Shows
+                <p className="text-[14px] text-[#FC6435] font-bold">
+                  {activeWithdrawal?.user_full_name}
                 </p>
               </div>
               <div className="flex items-center justify-between py-[16px] px-[32px] border-b">
                 <p className="text-[14px] text-[#343434] font-semibold">
-                  Location
+                  Method
                 </p>
-                <p className="text-[14px] text-[#343434] font-bold">Rome</p>
+                <p className="text-[14px] text-[#343434] font-bold">-</p>
               </div>
               <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
                 <p className="text-[14px] text-[#343434] font-semibold">
-                  Start Date
+                  Amount
                 </p>
                 <p className="text-[14px] text-[#343434] font-bold">
-                  October 19th, 2024
+                  {activeWithdrawal?.amount}
                 </p>
               </div>
               <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
                 <p className="text-[14px] text-[#343434] font-semibold">
-                  End Date
+                  Charge
                 </p>
                 <p className="text-[14px] text-[#343434] font-bold">
-                  October 20th, 2019
+                 {activeWithdrawal?.charge}
                 </p>
               </div>
-              <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
-                <p className="text-[14px] text-[#343434] font-semibold">
-                  Seats
-                </p>
-                <p className="text-[14px] text-[#343434] font-bold">100</p>
-              </div>
-              <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
-                <p className="text-[14px] text-[#343434] font-semibold">
-                  Seats Booked
-                </p>
-                <p className="text-[14px] text-[#343434] font-bold">0</p>
-              </div>
-              <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
-                <p className="text-[14px] text-[#343434] font-semibold">
-                  Speakers
-                </p>
-                <p className="text-[14px] text-[#343434] font-bold">0</p>
-              </div>
-
-              <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
-                <p className="text-[14px] text-[#343434] font-semibold">
-                  Price
-                </p>
-                <p className="text-[14px] text-[#343434] font-bold">100,000</p>
-              </div>
+             
               <div className="py-[16px] px-[32px] flex items-center justify-between ">
                 <p className="text-[14px] text-[#343434] font-semibold">
                   Status
                 </p>
-                <p className="w-[99px] text-[#606060] rounded-[20px] flex items-center justify-center bg-[#fceceb] border border-[#FF9F43] p-[5px]">
-                  Pending
-                </p>
+                {activeWithdrawal?.status === 'approved' && <p className="w-[99px]  rounded-[20px] flex items-center justify-center bg-[#e4f5e9] border border-[#4AC971] text-[#4AC971] p-[5px]">
+                    {activeWithdrawal?.status}
+                  </p>}
+                  {activeWithdrawal?.status === 'pending' && <p className="w-[99px]  rounded-[20px] flex items-center justify-center bg-[#f0dcca] border border-[#FF9F43] text-[#FF9F43] p-[5px]">
+                    {activeWithdrawal?.status}
+                  </p>}
+                  {activeWithdrawal?.status === 'rejected' && <p className="w-[99px]  rounded-[20px] flex items-center justify-center bg-[#f1dada] border border-[#EB2222] text-[#EB2222] p-[5px]">
+                    {activeWithdrawal?.status}
+                  </p>}
               </div>
             </div>
           </div>
@@ -126,35 +121,41 @@ const Details = () => {
             </p>
             <div className="py-[16px] border-b border-b-[#8F8F8F]">
               <p className="text-[#606060] font-semibold">Account Number</p>
-              <p className="text-[14px] text-[#606060]">999</p>
-              <div className="flex mt-[24px] items-center space-x-4">
-                <button
-                  className="bg-none border border-[#4AC971] rounded-[8px]  text-[#4AC971] flex items-center p-[10px] space-x-[8px] transition-all active:scale-95"
-                  onClick={() => {
-                    setisAcceptOpen(true);
-                  }}
-                >
-                  <Image
-                    src="/icons/approveIcon.svg"
-                    width={12}
-                    height={12}
-                    alt="approveIcon"
-                  />
-                  <span className="text-[14px]">Approve</span>
-                </button>
-                <button
-                  className="bg-none border border-[#EB2222] rounded-[8px] p-[10px] text-[#EB2222] flex items-center space-x-[8px] transition-all active:scale-95"
-                  onClick={() => setisRejectOpen(true)}
-                >
-                  <Image
-                    src="/icons/rejectIcon.svg"
-                    width={12}
-                    height={12}
-                    alt="rejectIcon"
-                  />
-                  <span className="text-[14px]">Reject</span>
-                </button>
-              </div>
+              <p className="text-[14px] text-[#606060]">{activeWithdrawal?.user?.account_number}</p>
+              {activeWithdrawal?.status === 'pending' &&
+               <div className="flex mt-[24px] items-center space-x-4">
+               <button
+                 className="bg-none border border-[#4AC971] rounded-[8px]  text-[#4AC971] flex items-center p-[10px] space-x-[8px] transition-all active:scale-95"
+                 onClick={() => {
+                  approveWithdrawal(activeWithdrawal?.id);
+                 }}
+
+               >
+                 <Image
+                   src="/icons/approveIcon.svg"
+                   width={12}
+                   height={12}
+                   alt="approveIcon"
+                 />
+                 <span className="text-[14px]">Approve</span>
+               </button>
+               <button
+                 className="bg-none border border-[#EB2222] rounded-[8px] p-[10px] text-[#EB2222] flex items-center space-x-[8px] transition-all active:scale-95"
+                 onClick={() => 
+                  rejectWithdrawal(activeWithdrawal?.id)
+                 }
+               >
+                 <Image
+                   src="/icons/rejectIcon.svg"
+                   width={12}
+                   height={12}
+                   alt="rejectIcon"
+                 />
+                 <span className="text-[14px]">Reject</span>
+               </button>
+             </div>
+              }
+              
             </div>
           </div>
         </div>

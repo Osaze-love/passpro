@@ -26,76 +26,148 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 
 const CategoryComp = () => {
-  const { getCategories, loading, toggleCategoryStatus, createCategory } = useCategory();
+  const { getCategories, loading, toggleCategoryStatus, createCategory, updateCategory } = useCategory();
   const {categories} = useSelector((state: RootState) => state.category);
   const [isOpen, setisOpen] = useState(false);
   const [isCategoryOpen, setisCategoryOpen] = useState(false);
-  const [file, setFile] = useState<any>(null);
-  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [isUpdateCategoryOpen, setisUpdateCategoryOpen] = useState(false);
+  // const [file, setFile] = useState<any>(null);
+  const [imageSrc, setImageSrc] = useState<any>(null);
+  const [formData, setFormData] = useState<FormData | null>(null);
   const [categoryId, setCategoryId] = useState<any>(0);
   const [categoryName, setCategoryName] = useState<string>('');
-
+  const [activeCategory, setActiveCategory] = useState<any>('');
+  const closeUpdateCategory = () => {
+    setisUpdateCategoryOpen(false)
+  }
   const closeDialog = () => setisOpen(false);
   const closeCategoryDialog = () => {
-    setisCategoryOpen(false);
-    setFile(null);
+     setisCategoryOpen(false);
+    setCategoryName("");
+    setFormData(null);
     setImageSrc(null);
   };
   useEffect(() => {
     getCategories();
   },[])
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
 
     if (!selectedFile) return;
 
     const validFormats = ["image/jpeg", "image/png", "image/jpg"];
     if (!validFormats.includes(selectedFile.type)) {
-      alert(
-        "Unsupported file format. Please upload a PNG, JPEG, or JPG image."
-      );
+      alert("Unsupported file format. Please upload a PNG, JPEG, or JPG image.");
       return;
     }
 
-    const img = document.createElement("img");
-    const objectURL = URL.createObjectURL(selectedFile);
-    img.src = objectURL;
+    try {
+      // Resize the image to 200x200
+      const resizedBlob = await resizeImage(selectedFile, 200, 200);
 
-    img.onload = () => {
-      // If image dimensions are not 200x200, resize it
-      if (img.width !== 200 || img.height !== 200) {
-        const canvas = document.createElement("canvas");
-        canvas.width = 200;
-        canvas.height = 200;
-        const ctx = canvas.getContext("2d");
-        if (ctx) {
-          ctx.drawImage(img, 0, 0, 200, 200);
-          const resizedImage = canvas.toDataURL(selectedFile.type);
-          setFile({
-            preview: resizedImage,
-            name: selectedFile.name,
-            size: selectedFile.size,
-            type: selectedFile.type,
-          });
-          setImageSrc(resizedImage);
-        }
-      } else {
-        setFile({
-          preview: objectURL,
-          name: selectedFile.name,
-          size: selectedFile.size,
-          type: selectedFile.type,
-        });
-        setImageSrc(objectURL);
-      }
-    };
+      const newFormData = new FormData();
+      newFormData.append("image", resizedBlob, selectedFile.name);
 
-    img.onerror = () => {
-      alert("Error loading the image. Please try again.");
-    };
+      const imageUrl = URL.createObjectURL(resizedBlob);
+
+      setImageSrc(imageUrl);
+      setFormData(newFormData);
+      console.log(newFormData);
+      
+
+      console.log("FormData content:", newFormData.get("image"));
+    } catch (error) {
+      console.error("Error resizing the image:", error);
+    }
   };
 
+  // Function to resize the image
+  const resizeImage = (file: File, width: number, height: number): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const img = document.createElement("img") as HTMLImageElement;
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        img.src = e.target?.result as string;
+      };
+
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          canvas.toBlob(
+            (blob) => {
+              if (blob) resolve(blob);
+              else reject(new Error("Failed to create resized blob."));
+            },
+            file.type,
+            1
+          );
+        } else {
+          reject(new Error("Canvas context not available."));
+        }
+      };
+
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleCreateCategory = async () => {
+    if (!categoryName || !formData) {
+      alert("Please provide a category name and upload an image.");
+      return;
+    }
+    formData.append("category_name", categoryName);
+  
+    // Call your createCategory function with the FormData
+    setisCategoryOpen(false);
+    await createCategory(formData);
+  
+    setCategoryName("");
+    setFormData(null);
+    setImageSrc(null);
+  };
+
+  const handleEditCategory = (data: any) => {
+    setActiveCategory(data);
+
+  if (formData) {
+    formData.append("image", `https://sub.passpro.africa/storage/${data.image}`);
+  } else {
+    const newFormData = new FormData();
+    newFormData.append("image", `https://sub.passpro.africa/storage/${data.image}`);
+    setFormData(newFormData); 
+  }
+    setCategoryName(data.category_name);
+    setImageSrc(data.image); 
+    setisUpdateCategoryOpen(true);
+  };
+
+  const handleUpdateCategory = async () => {
+    if (!categoryName || !formData) {
+      alert("Please provide a category name and upload an image.");
+      return;
+    }
+ 
+    formData.append("category_name", categoryName);
+    // console.log("FormData content:", formData.get("image"));
+    // console.log("FormData content:", formData.get("category_name"));
+
+
+    await updateCategory(activeCategory.id, formData);
+
+    setisUpdateCategoryOpen(false);
+    setCategoryName('');
+    setImageSrc(null);
+    setFormData(null);
+  };
+  
 
   return (
     <div className="px-[43px] py-[40px] bg-[#fdf7f4]">
@@ -155,6 +227,8 @@ const CategoryComp = () => {
                         width={12}
                         height={12}
                         alt="editIcon"
+                        onClick={() => handleEditCategory(data)}
+
                       />
                       <span className="text-[14px]">Edit</span>
                     </button>
@@ -170,7 +244,11 @@ const CategoryComp = () => {
                         height={12}
                         alt="disableIcon"
                       />
+                      {data?.status === 'disabled' ? 
+                      <span className="text-[14px]">Enable</span>
+                      :
                       <span className="text-[14px]">Disable</span>
+                      }
                     </button>
                   </div>
                 </TableCell>
@@ -188,7 +266,7 @@ const CategoryComp = () => {
               Confirmation Alert!
             </p>
             <p className="text-[14px]  text-[#808080] py-4 border-t border-b">
-              Are you sure you want to disable this category?
+              Are you sure you want to update this category?
             </p>
           </div>
 
@@ -286,11 +364,79 @@ const CategoryComp = () => {
 
           <DialogFooter className="mt-[35px]">
             <Button
-            onClick={async() => {
-              await createCategory(categoryName, imageSrc)
-              console.log(categoryName, imageSrc);
+            onClick={handleCreateCategory}
+              className="w-full py-[10px] shadow-sm font-bold text-white bg-[#FC6435] hover:bg-[#FC6435] transition-all active:scale-95"
+            >
+              Submit
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isUpdateCategoryOpen} onOpenChange={closeUpdateCategory}>
+        <DialogContent className="sm:max-w-[524px] max-h-[80vh] overflow-scroll scrollbar-hide">
+          <DialogTitle className="hidden"></DialogTitle>
+          <div className="flex flex-col">
+            <p className="text-[20px] font-semibold pb-4 border-b mb-[32px]">
+              Update Category
+            </p>
+
+            <div className="grid w-full items-center gap-[8px] mb-[43px]">
+              <Label htmlFor="image" className="">
+                <div className="flex items-start font-bold text-[14px] text-[#333333]">
+                  <p>Image</p>
+                  <span className="text-[#F24455] text-md">*</span>
+                </div>
+              </Label>
+              <div className="h-[345px] w-full border-2 shadow-sm relative rounded-[8px]">
+              {imageSrc && <Image src={`https://sub.passpro.africa/storage/${imageSrc}`} alt="Category Image" width={200} height={200} />}
+
               
-            }}
+                <label
+                  htmlFor="file-upload"
+                  className="absolute -right-2 -bottom-2 cursor-pointer"
+                >
+                  <Image
+                    src={"/icons/Upload.svg"}
+                    height={40}
+                    width={40}
+                    alt="uploadIcon"
+                  />
+                  <input
+                    id="file-upload"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleFileChange}
+                  />
+                </label>
+              </div>
+              <p className="text-[#606060] text-[14px]">
+                Supported Files:{" "}
+                <span className="font-bold">.png, .jpg, .jpeg.</span> Image will
+                be resized into <span className="font-bold">200x200px</span>
+              </p>
+            </div>
+
+            <div className="grid w-full items-center gap-[8px]">
+              <Label htmlFor="category" className="">
+                <div className="flex items-start font-bold text-[14px] text-[#333333]">
+                  <p>Name</p>
+                  <span className="text-[#F24455] text-md">*</span>
+                </div>
+              </Label>
+              <Input id="category"
+               value={categoryName}
+               onChange={(e) => {
+                setCategoryName(e.target.value)
+               }}
+              className="focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 py-[8px] px-4 shadow-sm" />
+            </div>
+          </div>
+
+          <DialogFooter className="mt-[35px]">
+            <Button
+            onClick={handleUpdateCategory}
               className="w-full py-[10px] shadow-sm font-bold text-white bg-[#FC6435] hover:bg-[#FC6435] transition-all active:scale-95"
             >
               Submit

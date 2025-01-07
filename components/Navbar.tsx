@@ -1,10 +1,25 @@
+"use client"
 import { Bell, CircleUserRound } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 import { Input } from "./ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { useRouter } from "next/navigation";
+import { resetState } from "@/redux/slices/userslice";
 
 const Navbar = () => {
+  const {usersDetail} = useSelector((state: RootState) => state.user);
+  const router = useRouter();
+  const dispatch = useDispatch();
+
   return (
     <div className="sticky bg-[#FC6435] top-0 flex items-center  justify-between border-b z-30">
       <div className="flex w-[625px] h-[48px] items-center border px-2 rounded-[8px] my-[33px] mx-[33px]">
@@ -44,15 +59,20 @@ const Navbar = () => {
           height={30}
           alt="notificationIcon"
         />
-
-        <div className="space-x-[6px] flex items-center">
+        
+        <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+        <div className="cursor-pointer space-x-[6px] flex items-center">
           <Avatar>
             <AvatarImage
-              src="https://s3-alpha-sig.figma.com/img/51e0/8f4c/9691af661a1026969f7d54c57821a447?Expires=1730678400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=prU7JUYowttySv45QxL16wEdmJHt6YY6j54RyI0XIPEklyWTFLLk3taWl~l0eXnNg9KcBVAsXxUd7OZWxYEMupFKqN4t0Ggt~4sDVFDU5HoTsoYKYQ670b4jCD2UZ8PfchPGjDqVqbYXTWdUbZdw0Nbz02ybF43q0Ur844NTccHmpYBELP6EzB3SvwA5UqPTZFFbC0lApyuBNDsibdbi~CSs-Or2LRzcUO4huGP2fxmzYuu~Xso~UsWEQMpgcCCVv6ktsqsysWxbP0T3D9rdsErNhOiKe1~3mJIvI-2z9E35Yjci21aqe6aWo15KXByjaAf6IasXpPfwr-g6bHZqkg__"
+              src={`https://sub.passpro.africa/storage/${usersDetail?.profile_image}`}
               alt="@shadcn"
               className="object-cover"
             />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarFallback>
+  {usersDetail?.username ? usersDetail.username[0] : 'U'}
+</AvatarFallback>
           </Avatar>
           <h3 className="font-semibold text-[12px] text-white">Admin</h3>
           <Image
@@ -63,6 +83,24 @@ const Navbar = () => {
             className="rotate-90"
           />
         </div>
+        </TooltipTrigger>
+        <TooltipContent className="bg-white px-0">
+          <div className="bg-white flex flex-col gap-[20px] rounded-[8px] ">
+            <p 
+            onClick={() => {
+              router.push('/profile')
+            } }
+            className="px-[30px] cursor-pointer py-[9px] border-b font-semibold text-[#343434] border-b-[#D9D9D9]">Profile</p>
+            <p
+             onClick={() => {
+              dispatch(resetState())
+             }}
+            className="px-[30px] py-[9px] font-semibold text-[#343434] cursor-pointer">Logout</p>
+          </div>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+   
       </div>
     </div>
   );

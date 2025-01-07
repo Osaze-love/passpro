@@ -11,85 +11,39 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useRouter } from "next/navigation";
+import useOrder from "@/hooks/order";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { useEffect, useState } from "react";
+import BarLoader from "react-spinners/BarLoader";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const Orders = () => {
   const router = useRouter();
-  const ordersData = [
-    {
-      title: "Mumbai Rhythms: A Fusion of Dance and Culture",
-      username: "saketkumar",
-      price: "$24",
-      quantity: "1",
-      total: "$39",
-      payment: "pending",
-      status: "Cancelled",
-    },
-    {
-      title: "Mumbai Rhythms: A Fusion of Dance and Culture",
-      username: "saketkumar",
-      price: "$24",
-      quantity: "1",
-      total: "$39",
-      payment: "pending",
-      status: "Cancelled",
-    },
-    {
-      title: "Mumbai Rhythms: A Fusion of Dance and Culture",
-      username: "saketkumar",
-      price: "$24",
-      quantity: "1",
-      total: "$39",
-      payment: "pending",
-      status: "Cancelled",
-    },
-    {
-      title: "Mumbai Rhythms: A Fusion of Dance and Culture",
-      username: "saketkumar",
-      price: "$24",
-      quantity: "1",
-      total: "$39",
-      payment: "pending",
-      status: "Cancelled",
-    },
-    {
-      title: "Mumbai Rhythms: A Fusion of Dance and Culture",
-      username: "saketkumar",
-      price: "$24",
-      quantity: "1",
-      total: "$39",
-      payment: "pending",
-      status: "Cancelled",
-    },
-    {
-      title: "Mumbai Rhythms: A Fusion of Dance and Culture",
-      username: "saketkumar",
-      price: "$24",
-      quantity: "1",
-      total: "$39",
-      payment: "pending",
-      status: "Cancelled",
-    },
-    {
-      title: "Mumbai Rhythms: A Fusion of Dance and Culture",
-      username: "saketkumar",
-      price: "$24",
-      quantity: "1",
-      total: "$39",
-      payment: "pending",
-      status: "Cancelled",
-    },
-    {
-      title: "Mumbai Rhythms: A Fusion of Dance and Culture",
-      username: "saketkumar",
-      price: "$24",
-      quantity: "1",
-      total: "$39",
-      payment: "pending",
-      status: "Cancelled",
-    },
-  ];
+  const {orders} = useSelector((state: RootState) => state.order);
+  const { getOrders, loading } = useOrder();
+  const [isOpen, setisOpen] = useState(false);
+    const closeDialog = () => setisOpen(false);
+  const [orderData, setOrderData] = useState<any>({});
+
+  useEffect(() => {
+     getOrders();
+  },[])
+  
   return (
     <div className="px-[43px] py-[40px] bg-[#fdf7f4]">
+        {loading && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-85">
+     
+        <BarLoader color="#FC6435" />
+       
+    </div> 
+  )}
       <section className="flex items-center justify-between mb-[32px]">
         <h3 className="text-[20px] font-semibold">Orders</h3>
         <div className="flex items-center space-x-[24px]">
@@ -110,6 +64,7 @@ const Orders = () => {
           <div className="flex w-[277px] h-[48px] items-center border rounded-[8px]  bg-white">
             <Input
               placeholder="Name, User"
+             
               className="shadow-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 border-0 grow text-black placeholder:text-[#D9D9D9] bg-transparent placeholder:text-[12px] "
             />
             <div className="bg-[#FC6435] h-full flex w-max justify-center items-center cursor-pointer px-[20px] rounded-tr-[8px] rounded-br-[8px]">
@@ -151,38 +106,55 @@ const Orders = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {ordersData.map((data, index) => (
+            {orders?.map((data, index) => (
               <TableRow key={index}>
                 <TableCell className=" h-[75px] text-[#606060] font-bold border-l w-[200px]">
-                  {data.title}
+                  {data?.event_title}
                 </TableCell>
                 <TableCell className="text-[#606060] font-bold ">
-                  {data.username}
+                  {data?.user_name}
                 </TableCell>
                 <TableCell className="text-[#606060] font-bold text-[14px]">
-                  {data.price}
+                  {data?.ticket_price}
                 </TableCell>
                 <TableCell className="text-[#606060] font-bold text-[14px]">
-                  {data.quantity}
+                  {data?.ticket_quantity}
                 </TableCell>
                 <TableCell className="text-[#606060] font-bold text-[14px]">
-                  {data.total}
+                  {data?.total_price}
                 </TableCell>
                 <TableCell>
-                  <p className=" text-[#FFB494] w-[99px] flex items-center justify-center rounded-[20px] bg-[#fae6e6] border border-[#FFB494] p-[5px]">
-                    {data.payment}
-                  </p>
+             
+                  {data?.payment_status === 'cancelled' &&  <p className="w-[99px] text-[#EB2222] rounded-[20px] flex items-center justify-center bg-[#f5bcbc] border border-[#EB2222] p-[5px]">
+                    {data?.payment_status}
+                  </p>}
+                  {data?.payment_status === 'paid' &&  <p className="w-[99px] text-[#34C759] rounded-[20px] flex items-center justify-center bg-[#E9F9F0] border border-[#34C759] p-[5px]">
+                    {data?.payment_status}
+                  </p>}
+                  {data?.payment_status === 'pending' &&  <p className="w-[99px] text-[#FFB494] rounded-[20px] flex items-center justify-center bg-[#FFD8C8] border border-[#FFB494] p-[5px]">
+                    {data?.payment_status}
+                  </p>}
+                
                 </TableCell>
                 <TableCell>
-                  <p className="w-[99px] text-[#EB2222] rounded-[20px] flex items-center justify-center bg-[#f5bcbc] border border-[#EB2222] p-[5px]">
-                    {data.status}
-                  </p>
+               
+                  {data?.status === 'cancelled' &&  <p className="w-[99px] text-[#EB2222] rounded-[20px] flex items-center justify-center bg-[#f5bcbc] border border-[#EB2222] p-[5px]">
+                    {data?.status}
+                  </p>}
+                  {data?.status === 'active' &&  <p className="w-[99px] text-[#34C759] rounded-[20px] flex items-center justify-center bg-[#E9F9F0] border border-[#34C759] p-[5px]">
+                    {data?.status}
+                  </p>}
+                  {data?.status === 'pending' &&  <p className="w-[99px] text-[#FFB494] rounded-[20px] flex items-center justify-center bg-[#FFD8C8] border border-[#FFB494] p-[5px]">
+                    {data?.status}
+                  </p>}
+                  
                 </TableCell>
                 <TableCell className="text-right border-r ">
                   <button
                     className="bg-none border border-[#FC6435] rounded-[8px] p-[10px] text-[#FC6435] flex items-center space-x-[8px] transition-all active:scale-95"
                     onClick={() => {
-                      router.push("/orders/details");
+                      setOrderData(data);
+                     setisOpen(true);
                     }}
                   >
                     Details
@@ -193,6 +165,98 @@ const Orders = () => {
           </TableBody>
         </Table>
       </section>
+
+      <Dialog open={isOpen} onOpenChange={closeDialog}>
+        <DialogContent className="sm:max-w-[700px] max-h-[90vh] scrollbar-hide overflow-scroll">
+          <DialogTitle className="hidden"></DialogTitle>
+          <div className=" space-y-[10px]">
+      <h3 className=" font-semibold text-[24px] text-[#606060]">Order Details</h3>
+      <section className="border w-full">
+        <div className="flex items-center justify-between border-b">
+          <p className="px-[40px] py-[40px]  font-semibold text-[#606060]">
+            Event Title
+          </p>
+          <p className="px-[40px]  font-semibold">
+            {orderData?.event_title}
+          </p>
+        </div>
+        <div className="flex items-center justify-between border-b">
+          <p className="px-[40px] py-[40px]  font-semibold text-[#606060]">
+            Organized By
+          </p>
+          <p className="px-[40px]  text-[#FC6435] font-semibold">
+            {orderData?.organized_by}
+          </p>
+        </div>
+        <div className="flex items-center justify-between border-b">
+          <p className="px-[40px] py-[40px]  font-semibold text-[#606060]">
+            Username
+          </p>
+          <p className="px-[40px]  text-[#FC6435] font-semibold">
+            {orderData.user_name}
+          </p>
+        </div>
+        <div className="flex items-center justify-between border-b">
+          <p className="px-[40px] py-[40px]  font-semibold text-[#606060]">
+            Price
+          </p>
+          <p className="px-[40px]  font-bold">{orderData?.ticket_price}</p>
+        </div>
+        <div className="flex items-center justify-between border-b">
+          <p className="px-[40px] py-[40px]  font-semibold text-[#606060]">
+            Quantity
+          </p>
+          <p className="px-[40px]  font-bold">{orderData.ticket_quantity}</p>
+        </div>
+        <div className="flex items-center justify-between border-b">
+          <p className="px-[40px] py-[40px]  font-semibold text-[#606060]">
+            Total
+          </p>
+          <p className="px-[40px]  font-bold">{orderData?.total_price}</p>
+        </div>
+        <div className="flex items-center justify-between border-b">
+          <p className="px-[40px] py-[40px]  font-semibold text-[#606060]">
+            Payment Status
+          </p>
+          
+          <p className="px-[40px]">
+          {orderData?.payment_status === 'cancelled' &&  <p className="w-[99px] text-[#EB2222] rounded-[20px] flex items-center justify-center bg-[#f5bcbc] border border-[#EB2222] p-[5px]">
+                    {orderData?.payment_status}
+                  </p>}
+                  {orderData?.payment_status === 'paid' &&  <p className="w-[99px] text-[#34C759] rounded-[20px] flex items-center justify-center bg-[#E9F9F0] border border-[#34C759] p-[5px]">
+                    {orderData?.payment_status}
+                  </p>}
+                  {orderData?.payment_status === 'pending' &&  <p className="w-[99px] text-[#FFB494] rounded-[20px] flex items-center justify-center bg-[#FFD8C8] border border-[#FFB494] p-[5px]">
+                    {orderData?.payment_status}
+                  </p>}
+          </p>
+         
+        </div>
+        <div className="flex items-center justify-between border-b">
+          <p className="px-[40px] py-[40px]  font-semibold text-[#606060]">
+            Status
+          </p>
+          <p className="px-[40px]">
+          {orderData?.status === 'cancelled' &&  <p className="w-[99px] text-[#EB2222] rounded-[20px] flex items-center justify-center bg-[#f5bcbc] border border-[#EB2222] p-[5px]">
+                    {orderData?.status}
+                  </p>}
+                  {orderData?.status === 'active' &&  <p className="w-[99px] text-[#34C759] rounded-[20px] flex items-center justify-center bg-[#E9F9F0] border border-[#34C759] p-[5px]">
+                    {orderData?.status}
+                  </p>}
+                  {orderData?.status === 'pending' &&  <p className="w-[99px] text-[#FFB494] rounded-[20px] flex items-center justify-center bg-[#FFD8C8] border border-[#FFB494] p-[5px]">
+                    {orderData?.status}
+                  </p>}
+          </p>
+        
+        </div>
+      </section>
+    </div>
+
+          <DialogFooter>
+           
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -12,65 +12,35 @@ import {
     TableRow,
   } from "@/components/ui/table";
 import React, { useEffect, useState } from 'react'
-import useSupport from '@/redux/slices/supportslice';
+import useSupport from '@/hooks/support';
 import BarLoader from 'react-spinners/BarLoader';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+import { useRouter } from 'next/navigation';
+import { updateActiveTicket } from '@/redux/slices/supportslice';
 
 const page = () => {
   const { getSupportTickets, loading } = useSupport();
+  const {supportTickets} = useSelector((state: RootState) => state.support);
+  const router = useRouter();
+  const dispatch = useDispatch();
      
   useEffect(() => {
         getSupportTickets();
     },[]);
 
-
-    const ticketData = [
-        {
-            subject: '[Ticket#735642] teste',
-            submitted : 'Adam Smith',
-            status: 'open',
-            priority: 'High',
-            reply: '3 days ago',
-        },
-        {
-            subject: '[Ticket#735642] teste',
-            submitted : 'Adam Smith',
-            status: 'open',
-            priority: 'High',
-            reply: '3 days ago',
-        },
-        {
-            subject: '[Ticket#735642] teste',
-            submitted : 'Adam Smith',
-            status: 'open',
-            priority: 'High',
-            reply: '3 days ago',
-        },
-        {
-            subject: '[Ticket#735642] teste',
-            submitted : 'Adam Smith',
-            status: 'open',
-            priority: 'High',
-            reply: '3 days ago',
-        },
-        {
-            subject: '[Ticket#735642] teste',
-            submitted : 'Adam Smith',
-            status: 'open',
-            priority: 'High',
-            reply: '3 days ago',
-        },
-        {
-            subject: '[Ticket#735642] teste',
-            submitted : 'Adam Smith',
-            status: 'open',
-            priority: 'High',
-            reply: '3 days ago',
-        },
-    ]
-    const [activeTab, setActiveTab] = useState("Pending Tickets"); 
+    const [activeTab, setActiveTab] = useState("All Tickets"); 
       const handleTabClick = (tab: string) => {
         setActiveTab(tab);
       };
+      useEffect(() => {
+        const status = activeTab === "All Tickets"
+          ? undefined
+          : activeTab === "Open Tickets"
+          ? "open"
+          : "closed";
+        getSupportTickets(status);
+      }, [activeTab]);
   return (
     <div className="px-[43px] py-[40px] bg-[#fdf7f4]">
        {loading && (
@@ -100,11 +70,9 @@ const page = () => {
 
       <section className="flex items-center space-x-[10px]">
         {[
-          "Pending Tickets",
-          "Closed Tickets",
-          "Answered Ticket",
-          "All Ticket",
-          
+          "All Tickets",
+          "Open Tickets",
+          "Closed Tickets",                 
         ].map((tab) => (
           <Button
             key={tab}
@@ -128,9 +96,9 @@ const page = () => {
               <TableHead className=" text-white font-extrabold rounded-tl-[8px]">
                 Subject
               </TableHead>
-              <TableHead className="text-white font-extrabold">
+              {/* <TableHead className="text-white font-extrabold">
               Submitted By
-              </TableHead>
+              </TableHead> */}
               <TableHead className="text-white font-extrabold">
               Status
               </TableHead>
@@ -145,27 +113,30 @@ const page = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {ticketData.map((data, index) => (
+            {supportTickets?.map((data, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium h-[75px] text-[#FC6435] border-l">
-                  {data.subject}
+                  {data?.subject}
                 
                 </TableCell>
-                <TableCell className="text-[#FC6435] font-bold">
+                {/* <TableCell className="text-[#FC6435] font-bold">
                   {data.submitted}
-                </TableCell>
+                </TableCell> */}
                 <TableCell>
-                         <p className=" text-[#606060] w-[64px] flex items-center justify-center rounded-[20px] bg-[#d1ecd8] border border-[#34C759] p-[5px]">
-                           {data.status}
-                         </p>
+                {data?.status === 'Open' ?  <p className=" text-[#606060] w-[64px] flex items-center justify-center rounded-[20px] bg-[#d1ecd8] border border-[#34C759] p-[5px]">
+                           {data?.status}
+                         </p> : <p className=" text-[#606060] w-[64px] flex items-center justify-center rounded-[20px] bg-[#E5E5E5] border border-[#343434] p-[5px]">
+                           {data?.status}
+                         </p>  }
+                        
                        </TableCell>
                 <TableCell>
                   <p className="w-[99px] text-[#606060] rounded-[20px] flex items-center justify-center bg-[#eac2c0] border border-[#FF3B30] p-[5px]">
-                    {data.priority}
+                    {data?.priority}
                   </p>
                 </TableCell>
                 <TableCell className="text-[#606060] text-[14px]">
-                  {data.reply}
+                  {data.last_reply_date}
                 </TableCell>
                 
                
@@ -173,9 +144,10 @@ const page = () => {
                    
                     <button
                       className="bg-none border border-[#FC6435] rounded-[8px] p-[10px] text-[#FC6435]  transition-all active:scale-95"
-                    //   onClick={() => {
-                    //     router.push("/events/details");
-                    //   }}
+                      onClick={() => {
+                        dispatch(updateActiveTicket(data))
+                        router.push("/support/reply");
+                      }}
                     >
                       Details
                     </button>

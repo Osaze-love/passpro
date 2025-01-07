@@ -17,8 +17,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 const Details = () => {
+  const {activeEvent} = useSelector((state: RootState) => state.event);
   const [isAcceptOpen, setisAcceptOpen] = useState(false);
   const closeAcceptDialog = () => setisAcceptOpen(false);
   const [isRejectOpen, setisRejectOpen] = useState(false);
@@ -60,7 +63,7 @@ const Details = () => {
     <div className="px-[43px] py-[40px] bg-[#fdf7f4]">
       <section className="flex items-center justify-between mb-[32px]">
         <h3 className="text-[20px] font-semibold">Event Details</h3>
-        <div className="flex items-center justify-end space-x-4">
+        {/* <div className="flex items-center justify-end space-x-4">
           <button
             className="bg-none border border-[#4AC971] rounded-[8px]  text-[#4AC971] flex items-center p-[10px] space-x-[8px] transition-all active:scale-95"
             onClick={() => {
@@ -87,7 +90,7 @@ const Details = () => {
             />
             <span className="text-[14px]">Reject</span>
           </button>
-        </div>
+        </div> */}
       </section>
 
       <section className="grid grid-cols-5 gap-[32px]">
@@ -102,19 +105,21 @@ const Details = () => {
                   Title
                 </p>
                 <p className="text-[14px] text-[#343434] font-bold">
-                  Gustavo Lima
+                {activeEvent?.event_name}
                 </p>
               </div>
               <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
                 <p className="text-[14px] text-[#343434] font-semibold">Type</p>
-                <p className="text-[14px] text-[#343434] font-bold">Offline</p>
+                <p className="text-[14px] text-[#343434] font-bold">
+                {activeEvent?.event_type}
+                </p>
               </div>
               <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
                 <p className="text-[14px] text-[#343434] font-semibold">
                   Organizer
                 </p>
                 <p className="text-[#FC6435] text-[14px] font-bold">
-                  On network solutions pvt ltd
+                {activeEvent?.user_full_name}
                 </p>
               </div>
               <div className="flex items-center justify-between py-[16px] px-[32px] border-b">
@@ -122,21 +127,23 @@ const Details = () => {
                   Category
                 </p>
                 <p className="text-[14px] text-[#343434] font-bold">
-                  Car Shows
+                {activeEvent?.category_name}
                 </p>
               </div>
               <div className="flex items-center justify-between py-[16px] px-[32px] border-b">
                 <p className="text-[14px] text-[#343434] font-semibold">
                   Location
                 </p>
-                <p className="text-[14px] text-[#343434] font-bold">Rome</p>
+                <p className="text-[14px] text-[#343434] font-bold">
+                {activeEvent?.event_location}
+                </p>
               </div>
               <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
                 <p className="text-[14px] text-[#343434] font-semibold">
                   Start Date
                 </p>
                 <p className="text-[14px] text-[#343434] font-bold">
-                  October 19th, 2024
+                {activeEvent?.start_date}
                 </p>
               </div>
               <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
@@ -144,53 +151,63 @@ const Details = () => {
                   End Date
                 </p>
                 <p className="text-[14px] text-[#343434] font-bold">
-                  October 20th, 2019
+                {activeEvent?.end_date}
                 </p>
               </div>
               <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
                 <p className="text-[14px] text-[#343434] font-semibold">
                   Seats
                 </p>
-                <p className="text-[14px] text-[#343434] font-bold">100</p>
+                <p className="text-[14px] text-[#343434] font-bold">-</p>
               </div>
               <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
                 <p className="text-[14px] text-[#343434] font-semibold">
                   Seats Booked
                 </p>
-                <p className="text-[14px] text-[#343434] font-bold">0</p>
+                <p className="text-[14px] text-[#343434] font-bold">-</p>
               </div>
               <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
                 <p className="text-[14px] text-[#343434] font-semibold">
                   Speakers
                 </p>
-                <p className="text-[14px] text-[#343434] font-bold">0</p>
+                <p className="text-[14px] text-[#343434] font-bold">-</p>
               </div>
               <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
                 <p className="text-[14px] text-[#343434] font-semibold">
                   Featured
                 </p>
-                <p className="text-[#606060] w-[64px] flex items-center justify-center rounded-[20px] bg-[#f5e2e2] border border-[#FF3B30] p-[5px]">
-                  No
+                {activeEvent?.featured === 0 ? <p className=" text-[#FF3B30] w-[64px] flex items-center justify-center rounded-[20px] bg-[#f5e2e2] border border-[#FF3B30] p-[5px]">
+                    No
+                  </p> :
+                  <p className=" w-[64px] flex items-center justify-center rounded-[20px] bg-[#cee9d5] text-[#34C759] border border-[#34C759] p-[5px]">
+                  Yes
                 </p>
+                  }
               </div>
               <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
                 <p className="text-[14px] text-[#343434] font-semibold">
                   Price
                 </p>
-                <p className="text-[14px] text-[#343434] font-bold">100,000</p>
+                <p className="text-[14px] text-[#343434] font-bold">
+                {activeEvent?.price}
+                </p>
               </div>
               <div className="py-[16px] px-[32px] flex items-center justify-between ">
                 <p className="text-[14px] text-[#343434] font-semibold">
                   Status
                 </p>
-                <p className="w-[99px] text-[#606060] rounded-[20px] flex items-center justify-center bg-[#fceceb] border border-[#FF9F43] p-[5px]">
-                  Pending
+                {activeEvent.status === 'Pending' ? <p className="w-[99px] text-[#606060] rounded-[20px] flex items-center justify-center bg-[#fceceb] border border-[#FF9F43] p-[5px]">
+                    {activeEvent.status}
+                  </p> :
+                  <p className="w-[99px] flex items-center justify-center rounded-[20px] bg-[#cee9d5] text-[#34C759] border border-[#34C759] p-[5px]">
+                  {activeEvent.status}
                 </p>
+                  }
               </div>
             </div>
           </div>
 
-          <div className="w-full rounded-[8px] bg-white px-[32px] pb-[32px]">
+          {/* <div className="w-full rounded-[8px] bg-white px-[32px] pb-[32px]">
             <p className="text-[20px] text-[#606060] py-[32px] font-semibold">
               Time Slots
             </p>
@@ -229,51 +246,48 @@ const Details = () => {
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-          </div>
+          </div> */}
         </div>
         <div className="col-span-3 ">
           <div className="w-full bg-white p-[32px] rounded-[8px] mb-[24px]">
             <p className="text-[20px] font-semibold text-[#606060] pb-[12px] border-b border-b-[#8F8F8F]">
               Info
             </p>
-            <div className="py-[16px] border-b border-b-[#8F8F8F]">
+            {/* <div className="py-[16px] border-b border-b-[#8F8F8F]">
               <p className="text-[#606060] font-semibold">Short description:</p>
               <p className="text-[14px] text-[#606060]">
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Odit,
                 enim.
               </p>
-            </div>
+            </div> */}
             <div className="py-[16px] border-b border-b-[#8F8F8F]">
               <p className="text-[#606060] font-semibold">Description:</p>
               <p className="text-[14px] text-[#606060]">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex,
-                illum obcaecati? Deserunt, velit beatae rerum facere fuga modi
-                et, ex molestiae odio, quibusdam qui excepturi magnam asperiores
-                nihil. Vitae, a!
+               {activeEvent?.event_description}
               </p>
             </div>
             <div className="py-[16px] ">
               <p className="text-[#606060] font-semibold">Event Address:</p>
-              <p className="text-[14px] text-[#606060]">Rua de testes</p>
+              <p className="text-[14px] text-[#606060]">{activeEvent?.event_location}</p>
             </div>
           </div>
           <div className="w-full bg-white p-[32px] rounded-[8px] mb-[24px]">
             <p className="text-[20px] font-semibold text-[#606060] pb-[12px] border-b border-b-[#8F8F8F]">
               Cover Photo
             </p>
-            <img src="/coverphoto.svg" className="w-full py-4" />
+            <img src={`https://sub.passpro.africa/storage/${activeEvent?.gallery?.cover_photo}`} className="w-full py-4" />
           </div>
-          <div className="w-full bg-white p-[32px] rounded-[8px] mb-[24px]">
+          {/* <div className="w-full bg-white p-[32px] rounded-[8px] mb-[24px]">
             <p className="text-[20px] font-semibold text-[#606060] pb-[12px] border-b border-b-[#8F8F8F]">
               Speakers
             </p>
             <p className="text-[#343434] py-4">No Speakers added</p>
-          </div>
+          </div> */}
           <div className="w-full bg-white p-[32px] rounded-[8px] ">
             <p className="text-[20px] font-semibold text-[#606060] pb-[12px] border-b border-b-[#8F8F8F]">
               Gallery
             </p>
-            <p className="text-[#343434] py-4">No images added</p>
+            <img src={`https://sub.passpro.africa/storage/${activeEvent?.gallery?.event_image}`} className="w-full py-4" />
           </div>
         </div>
       </section>

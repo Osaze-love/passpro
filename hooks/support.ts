@@ -3,10 +3,10 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { updateSupportTickets } from "@/redux/slices/supportslice";
 import { toast } from "./use-toast";
-import { updateCategories } from "@/redux/slices/categoryslice";
 
-const useCategory = () => {
+const useSupport = () => {
   const base_url = process.env.NEXT_PUBLIC_BASE_URL;
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
@@ -14,111 +14,94 @@ const useCategory = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const getCategories = async () => {
+  const getSupportTickets = async (status?: string) => {
     setLoading(true);
     try {
-      const response = await axios.get(`${base_url}/categories`, {
+      const endpoint = status
+        ? `${base_url}/support-tickets?status=${status}`
+        : `${base_url}/support-tickets`;
+
+      const response = await axios.get(endpoint, {
         headers: {
           Authorization: `Bearer ${userToken}`,
-          Accept: "application/json",
         },
       });
-      dispatch(updateCategories(response?.data?.data));
+      dispatch(updateSupportTickets(response?.data?.data));
+      console.log(response);
     } catch (error: any) {
       if (error.response?.status === 403) {
         router.push("/login");
       } else {
-        console.error(error);
         toast({
           variant: "destructive",
           title: "Uh oh! Something went wrong.",
           description: error.response?.data?.message || "An unexpected error occurred.",
         });
+        console.error(error);
       }
     } finally {
       setLoading(false);
     }
   };
 
-  const createCategory = async (formData: FormData) => {
+  const replyTicket = async (ticketId: any, formData: FormData) => {
     setLoading(true);
     try {
-      const response = await axios.post(`${base_url}/categories`, formData, {
+      const response = await axios.post(`${base_url}/support-tickets/${ticketId}/reply`, formData, {
         headers: {
           Authorization: `Bearer ${userToken}`,
-          Accept: "application/json",
         },
       });
-      await getCategories();
+      toast({
+        variant: "default",
+        title: "Successfully Replied",
+      });
+      router.push("/support");
     } catch (error: any) {
       if (error.response?.status === 403) {
         router.push("/login");
       } else {
-        console.error(error);
         toast({
           variant: "destructive",
           title: "Uh oh! Something went wrong.",
           description: error.response?.data?.message || "An unexpected error occurred.",
         });
+        console.error(error);
       }
     } finally {
       setLoading(false);
     }
   };
 
-  const updateCategory = async (categoryId: any, formData: FormData) => {
-    setLoading(true);
-    try {
-      const response = await axios.post(`${base_url}/categories/${categoryId}`, formData, {
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-          Accept: "application/json",
-        },
-      });
-      await getCategories();
-    } catch (error: any) {
-      if (error.response?.status === 403) {
-        router.push("/login");
-      } else {
-        console.error(error);
-        toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: error.response?.data?.message || "An unexpected error occurred.",
-        });
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const toggleCategoryStatus = async (categoryId: any) => {
+  const updateTicketStatus = async (ticketId: any, status: any) => {
     setLoading(true);
     try {
       const response = await axios.patch(
-        `${base_url}/categories/${categoryId}/toggle-status`,
-        {},
+        `${base_url}/support-tickets/${ticketId}/status`,
+        {
+          status: status,
+        },
         {
           headers: {
             Authorization: `Bearer ${userToken}`,
-            Accept: "application/json",
           },
         }
       );
       toast({
-        description: response?.data?.message || "Status toggled successfully.",
+        variant: "default",
+        title: "Successfully updated",
       });
-      await getCategories();
+      router.push("/support");
     } catch (error: any) {
       if (error.response?.status === 403) {
         router.push("/login");
       } else {
-        console.error(error);
         toast({
           variant: "destructive",
           title: "Uh oh! Something went wrong.",
           description: error.response?.data?.message || "An unexpected error occurred.",
         });
+        console.error(error);
       }
     } finally {
       setLoading(false);
@@ -126,12 +109,11 @@ const useCategory = () => {
   };
 
   return {
-    getCategories,
-    toggleCategoryStatus,
-    updateCategory,
-    createCategory,
+    getSupportTickets,
+    replyTicket,
+    updateTicketStatus,
     loading,
   };
 };
 
-export default useCategory;
+export default useSupport;

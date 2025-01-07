@@ -1,5 +1,10 @@
+"use client"
+import { RootState } from "@/redux/store";
 import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -12,6 +17,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const user = useSelector((state: RootState) => state.user.userToken);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user) {
+      router.push("/dashboard");
+    }
+  }, [user, router]);
   return (
     <html lang="en">
       <body className={raleway.className}>

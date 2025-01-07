@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -19,85 +19,24 @@ import {
   DialogFooter,
   DialogTitle,
 } from "@/components/ui/dialog";
+import useOrganizer from "@/hooks/organizer";
+import BarLoader from "react-spinners/BarLoader";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 const ManageOrganizer = () => {
   const router = useRouter();
-  const organizersData = [
-    {
-      organizer: "Ayobami Taiwo",
-      organization: "R & D Events",
-      contact: "info@rdevents.com",
-      country: "NG",
-      featured: "No",
-      date: "October 19th, 2024",
-      balance: "13,000,000",
-    },
-    {
-      organizer: "Ayobami Taiwo",
-      organization: "R & D Events",
-      contact: "info@rdevents.com",
-      country: "NG",
-      featured: "No",
-      date: "October 19th, 2024",
-      balance: "13,000,000",
-    },
-    {
-      organizer: "Ayobami Taiwo",
-      organization: "R & D Events",
-      contact: "info@rdevents.com",
-      country: "NG",
-      featured: "No",
-      date: "October 19th, 2024",
-      balance: "13,000,000",
-    },
-    {
-      organizer: "Ayobami Taiwo",
-      organization: "R & D Events",
-      contact: "info@rdevents.com",
-      country: "NG",
-      featured: "No",
-      date: "October 19th, 2024",
-      balance: "13,000,000",
-    },
-    {
-      organizer: "Ayobami Taiwo",
-      organization: "R & D Events",
-      contact: "info@rdevents.com",
-      country: "NG",
-      featured: "No",
-      date: "October 19th, 2024",
-      balance: "13,000,000",
-    },
-    {
-      organizer: "Ayobami Taiwo",
-      organization: "R & D Events",
-      contact: "info@rdevents.com",
-      country: "NG",
-      featured: "No",
-      date: "October 19th, 2024",
-      balance: "13,000,000",
-    },
-    {
-      organizer: "Ayobami Taiwo",
-      organization: "R & D Events",
-      contact: "info@rdevents.com",
-      country: "NG",
-      featured: "No",
-      date: "October 19th, 2024",
-      balance: "13,000,000",
-    },
-    {
-      organizer: "Ayobami Taiwo",
-      organization: "R & D Events",
-      contact: "info@rdevents.com",
-      country: "NG",
-      featured: "No",
-      date: "October 19th, 2024",
-      balance: "13,000,000",
-    },
-  ];
+  const { getOrganizer, loading, toggleFeature } = useOrganizer();
+  const {organizers
+
+  } = useSelector((state: RootState) => state.organizer);
+
   const [activeTab, setActiveTab] = useState("All");
+  useEffect(() => {
+    getOrganizer();
+   },[]);
   const [isConfirmOpen, setisConfirmOpen] = useState(false);
+  const [organizerId, setOrganizerId] = useState(0);
   const closeConfirmDialog = () => setisConfirmOpen(false);
   const [isSuccessOpen, setisSuccessOpen] = useState(false);
   const closeSuccessDialog = () => setisSuccessOpen(false);
@@ -105,8 +44,30 @@ const ManageOrganizer = () => {
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
   };
+
+   useEffect(() => {
+            const filter = activeTab === "All"
+              ? undefined
+              : activeTab === "Active"
+              ? "active"
+              : activeTab === "Banned"
+              ? "banned"
+              : activeTab === "Email Unverified"
+              ? "email_unverified"
+              : activeTab === "Phone Verified"
+              ? "phone_verified"
+              : 'kyc_verified'
+            getOrganizer(filter);
+          }, [activeTab]);
   return (
     <div className="px-[43px] py-[40px] bg-[#fdf7f4]">
+       {loading && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-85">
+     
+        <BarLoader color="#FC6435" />
+       
+    </div> 
+  )}
       <section className="flex items-center justify-between mb-[32px]">
         <h3 className="text-[20px] font-semibold">Manage Organizers</h3>
         <div className="flex w-[277px] h-[48px] items-center border rounded-[8px]  mx-[33px] bg-white">
@@ -169,60 +130,77 @@ const ManageOrganizer = () => {
               <TableHead className="text-white text-center font-extrabold">
                 Date Joined
               </TableHead>
-              <TableHead className="text-white text-center font-extrabold">
-                Balance
-              </TableHead>
+             
               <TableHead className="text-center font-extrabold text-white rounded-tr-[8px]">
                 Action
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {organizersData.map((data, index) => (
+            {organizers?.map((data, index) => (
               <TableRow key={index}>
                 <TableCell className="font-bold text-center h-[75px] text-[#606060] border-l">
-                  {data.organizer}
+                  {data?.first_name}
                   <p className="text-[14px] text-[#FC6435]">
-                    @{data.organizer}
+                    @{data.username}
                   </p>{" "}
                 </TableCell>
                 <TableCell className="font-medium h-[75px] text-center text-[#606060] ">
-                  {data.organization}
+                  {data?.organization_name}
 
-                  <p className="text-[14px] text-[#FC6435]">1 Event</p>
+                  <p className="text-[14px] text-[#FC6435]">{data?.events?.length} Event(s)</p>
                 </TableCell>
                 <TableCell className="font-medium h-[75px] text-center text-[#606060] ">
-                  {data.contact}
+                  {data?.email}
 
-                  <p className="text-[14px] ">09023433233</p>
-                </TableCell>
-                <TableCell className="text-[#606060] font-bold text-center">
-                  {data.country}
-                </TableCell>
-                <TableCell className="text-center">
-                  <p className=" text-[#606060] w-[64px] flex items-center justify-center rounded-[20px] bg-[#f5e2e2] border border-[#FF3B30] p-[5px]">
-                    {data.featured}
+                  <p className="text-[14px] ">
+                  {data?.phone_number}
                   </p>
                 </TableCell>
-                <TableCell className="text-[#606060] text-[14px] text-center">
-                  {data.date}
-                  <p className="text-[14px] ">2 Days Ago</p>
+                <TableCell className="text-[#606060] font-bold text-center">
+                  {data?.country}
+                </TableCell>
+                <TableCell className="text-center">
+                {data?.feature === 0 ? 
+                 <p className=" text-[#FF3B30] w-[64px] flex items-center justify-center rounded-[20px] bg-[#f5e2e2] border border-[#FF3B30] p-[5px]">
+                    No
+                 </p>
+                : 
+                <p className=" text-[#34C759] w-[64px] flex items-center justify-center rounded-[20px] bg-[#dcede1] border border-[#34C759] p-[5px]">
+                    Yes
+                </p>
+                }
+                 
                 </TableCell>
                 <TableCell className="text-[#606060] text-[14px] text-center">
-                  {data.date}
-                  <p className="text-[14px] font-bold">{data.balance}</p>
+                  {data.created_at}
                 </TableCell>
+             
 
                 <TableCell className="text-center border-r w-[200px] ">
                   <div className="flex items-center justify-end space-x-2">
-                    <button
-                      className="bg-none border border-[#FC6435] rounded-[8px]  text-[#606060] flex items-center p-[10px] space-x-[8px] transition-all active:scale-95"
-                      onClick={() => {
-                        setisConfirmOpen(true);
-                      }}
-                    >
-                      Feature
-                    </button>
+                  {data?.feature === 0 ? 
+                   <button
+                   className="bg-none border border-[#FC6435] rounded-[8px]  text-[#606060] flex items-center p-[10px] space-x-[8px] transition-all active:scale-95"
+                   onClick={async() => {
+                    setOrganizerId(data?.id);
+                     setisConfirmOpen(true);
+                   }}
+                 >
+                   Feature
+                 </button> : 
+                 <button
+                 className="bg-none border border-[#FC6435] rounded-[8px]  text-[#606060] flex items-center p-[10px] space-x-[8px] transition-all active:scale-95"
+                 onClick={() => {
+                  setOrganizerId(data?.id);
+                   setisConfirmOpen(true);
+                 }}
+               >
+                 Unfeature
+               </button> 
+                }
+
+                   
                     <button
                       className="bg-none border border-[#FC6435] rounded-[8px] p-[10px] text-[#FC6435] flex items-center space-x-[8px] transition-all active:scale-95"
                       onClick={() => {
@@ -268,14 +246,18 @@ const ManageOrganizer = () => {
             <div className="space-x-2 flex items-center w-full">
               <Button
                 className="shadow-sm font-bold w-full text-white bg-[#FC6435] hover:bg-[#FC6435] transition-all  active:scale-95"
-                onClick={() => {
+                onClick={async() => {
                   setisConfirmOpen(false);
-                  setisSuccessOpen(true);
+                  await toggleFeature(organizerId);
                 }}
               >
                 Yes
               </Button>
-              <Button className="shadow-sm w-full font-bold text-[#FC6435] bg-transparent hover:bg-transparent transition-all active:scale-95 border border-[#FC6435]">
+              <Button
+              onClick={async() => {
+                setisConfirmOpen(false);
+              }}
+              className="shadow-sm w-full font-bold text-[#FC6435] bg-transparent hover:bg-transparent transition-all active:scale-95 border border-[#FC6435]">
                 No
               </Button>
             </div>

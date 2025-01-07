@@ -17,6 +17,10 @@ export const userslice = createSlice({
       updateUserToken: (state, action: PayloadAction<any>) => {
         state.userToken = action.payload;
       },
+      resetState: (state) => {
+        state.userToken = '';
+        state.usersDetail = {};
+      },
    
   },
 });
@@ -25,6 +29,7 @@ export const userslice = createSlice({
 export const {
  updateUserDetail,
  updateUserToken,
+ resetState,
 } = userslice.actions;
 
 // Export the reducer

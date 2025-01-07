@@ -17,84 +17,26 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import useEvent from "@/hooks/events";
+import BarLoader from "react-spinners/BarLoader";
+import { updateActiveEvent } from "@/redux/slices/eventslice";
 
 const ManageEvents = () => {
-  const eventsData = [
-    {
-      title: "Gustavo Lima",
-      location: "Rome",
-      organizer: "onnetworksolutions",
-      category: "Car Shows",
-      date: "October 19th, 2024",
-      featured: "No",
-      status: "Pending",
-    },
-    {
-      title: "Gustavo Lima",
-      location: "Rome",
-      organizer: "onnetworksolutions",
-      category: "Car Shows",
-      date: "October 19th, 2024",
-      featured: "No",
-      status: "Pending",
-    },
-    {
-      title: "Gustavo Lima",
-      location: "Rome",
-      organizer: "onnetworksolutions",
-      category: "Car Shows",
-      date: "October 19th, 2024",
-      featured: "No",
-      status: "Pending",
-    },
-    {
-      title: "Gustavo Lima",
-      location: "Rome",
-      organizer: "onnetworksolutions",
-      category: "Car Shows",
-      date: "October 19th, 2024",
-      featured: "Yes",
-      status: "Approved",
-    },
-    {
-      title: "Gustavo Lima",
-      location: "Rome",
-      organizer: "onnetworksolutions",
-      category: "Car Shows",
-      date: "October 19th, 2024",
-      featured: "No",
-      status: "Pending",
-    },
-    {
-      title: "Gustavo Lima",
-      location: "Rome",
-      organizer: "onnetworksolutions",
-      category: "Car Shows",
-      date: "October 19th, 2024",
-      featured: "Yes",
-      status: "Approved",
-    },
-    {
-      title: "Gustavo Lima",
-      location: "Rome",
-      organizer: "onnetworksolutions",
-      category: "Car Shows",
-      date: "October 19th, 2024",
-      featured: "No",
-      status: "Pending",
-    },
-    {
-      title: "Gustavo Lima",
-      location: "Rome",
-      organizer: "onnetworksolutions",
-      category: "Car Shows",
-      date: "October 19th, 2024",
-      featured: "Yes",
-      status: "Approved",
-    },
-  ];
+  const {events} = useSelector((state: RootState) => state.event);
+  const { loading, getEvents } = useEvent();
+  const [search, setSearch] = useState('');
+  const dispatch = useDispatch();
+ 
+  useEffect(() => {
+    if (search === '') {
+      getEvents();
+    }
+  }, [search]); 
+
   const router = useRouter();
   const [isOpen, setisOpen] = useState(false);
   const closeDialog = () => setisOpen(false);
@@ -105,15 +47,30 @@ const ManageEvents = () => {
   };
   return (
     <div className="px-[43px] py-[40px] bg-[#fdf7f4]">
+       {loading && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-85">
+     
+        <BarLoader color="#FC6435" />
+       
+    </div> 
+  )}
       <section className="flex items-center justify-between mb-[32px]">
         <h3 className="text-[20px] font-semibold">Manage Events</h3>
         <div className="flex w-[277px] h-[48px] items-center border rounded-[8px]  mx-[33px] bg-white">
           <Input
-            placeholder="Name I Organizer"
+            placeholder="Event Name"
+            onChange={(e) => {
+              setSearch(e.target.value)
+             }}
             className=" focus:outline-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 border-0 grow text-black placeholder:text-[#D9D9D9] bg-transparent placeholder:text-[12px] "
           />
-          <div className="bg-[#FC6435] h-full flex w-max justify-center items-center cursor-pointer px-[20px] rounded-tr-[8px] rounded-br-[8px]">
+          <div 
+          onClick={async() => {
+           await getEvents(search);
+          }}
+          className="bg-[#FC6435] h-full flex w-max justify-center items-center cursor-pointer px-[20px] rounded-tr-[8px] rounded-br-[8px]">
             <Image
+
               src={"/icons/searchIconwhite.svg"}
               width={20}
               height={19.88}
@@ -123,7 +80,7 @@ const ManageEvents = () => {
         </div>
       </section>
 
-      <section className="flex items-center space-x-[10px]">
+      {/* <section className="flex items-center space-x-[10px]">
         {[
           "All",
           "Approved",
@@ -145,7 +102,7 @@ const ManageEvents = () => {
             {tab}
           </Button>
         ))}
-      </section>
+      </section> */}
 
       <section className="mt-[40px]">
         <Table className="border-b">
@@ -174,10 +131,10 @@ const ManageEvents = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {eventsData.map((data, index) => (
+            {events?.map((data, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium h-[75px] text-[#606060] border-l">
-                  {data.title}
+                  {data?.event_name}
                   <p className="flex items-center space-x-1 text-[14px]">
                     <Image
                       src={"/icons/locationIcon.svg"}
@@ -185,41 +142,52 @@ const ManageEvents = () => {
                       height={9}
                       alt="loactionIcon"
                     />
-                    <span className="text-[14px]">{data.location}</span>{" "}
+                    <span className="text-[14px]">{data?.event_location}</span>{" "}
                   </p>
                 </TableCell>
                 <TableCell className="text-[#FC6435] font-bold">
-                  {data.organizer}
+                  {data?.user_full_name}
                 </TableCell>
                 <TableCell className="text-[#606060] text-[14px]">
-                  {data.category}
+                  {data?.category_name}                  
                 </TableCell>
                 <TableCell className="text-[#606060] text-[14px]">
-                  {data.date}
+                  {data?.start_date}
                 </TableCell>
                 <TableCell>
-                  <p className=" text-[#606060] w-[64px] flex items-center justify-center rounded-[20px] bg-[#f5e2e2] border border-[#FF3B30] p-[5px]">
-                    {data.featured}
-                  </p>
+                {data?.featured === 0 ? <p className=" text-[#FF3B30] w-[64px] flex items-center justify-center rounded-[20px] bg-[#f5e2e2] border border-[#FF3B30] p-[5px]">
+                    No
+                  </p> :
+                  <p className=" w-[64px] flex items-center justify-center rounded-[20px] bg-[#cee9d5] text-[#34C759] border border-[#34C759] p-[5px]">
+                  Yes
+                </p>
+                  }
+                  
                 </TableCell>
                 <TableCell>
-                  <p className="w-[99px] text-[#606060] rounded-[20px] flex items-center justify-center bg-[#fceceb] border border-[#FF9F43] p-[5px]">
+                {data.status === 'Pending' ? <p className="w-[99px] text-[#606060] rounded-[20px] flex items-center justify-center bg-[#fceceb] border border-[#FF9F43] p-[5px]">
                     {data.status}
-                  </p>
+                  </p> :
+                  <p className="w-[99px] flex items-center justify-center rounded-[20px] bg-[#cee9d5] text-[#34C759] border border-[#34C759] p-[5px]">
+                  {data.status}
+                </p>
+                  }
+                  
                 </TableCell>
                 <TableCell className="text-right border-r w-[200px]">
                   <div className="flex items-center justify-end space-x-2">
-                    <button
+                    {/* <button
                       className="bg-none border border-[#FC6435] rounded-[8px]  text-[#606060] flex items-center p-[10px] space-x-[8px] transition-all active:scale-95"
                       onClick={() => {
                         setisOpen(true);
                       }}
                     >
                       Feature
-                    </button>
+                    </button> */}
                     <button
                       className="bg-none border border-[#FC6435] rounded-[8px] p-[10px] text-[#FC6435] flex items-center space-x-[8px] transition-all active:scale-95"
                       onClick={() => {
+                        dispatch(updateActiveEvent(data));
                         router.push("/events/details");
                       }}
                     >
