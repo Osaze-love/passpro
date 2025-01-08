@@ -13,6 +13,7 @@ const useEvent = () => {
   const { userToken, usersDetail } = useSelector((state: RootState) => state.user);
 
   const [loading, setLoading] = useState(false);
+  const [addLoading, setAddLoading] = useState(false);
 
   const getEvents = async (search?: string) => {
     setLoading(true);
@@ -44,16 +45,17 @@ const useEvent = () => {
     }
   };
 
-  const createCategory = async (formData: FormData) => {
-    setLoading(true);
+  const createEvent = async (formData: FormData, setIsPublished: any) => {
+    setAddLoading(true);
     try {
-      const response = await axios.post(`${base_url}/categories`, formData, {
+      const response = await axios.post(`${base_url}/events`, formData, {
         headers: {
           Authorization: `Bearer ${userToken}`,
           Accept: "application/json",
         },
       });
-      await getEvents();
+      console.log(response);
+      setIsPublished(true);      
     } catch (error: any) {
       if (error.response?.status === 403) {
         router.push('/login');
@@ -67,14 +69,15 @@ const useEvent = () => {
         });
       }
     } finally {
-      setLoading(false);
+      setAddLoading(false);
     }
   };
 
   return {
     getEvents,
-    createCategory,
+    createEvent,
     loading,
+    addLoading
   };
 };
 
