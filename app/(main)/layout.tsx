@@ -1,6 +1,7 @@
 "use client"
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
+import { Toaster } from "@/components/ui/toaster";
 import { RootState } from "@/redux/store";
 import { Raleway } from "next/font/google";
 import { useRouter } from "next/navigation";
@@ -33,6 +34,8 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         <div className="w-full">
           <Navbar />
           {children}
+                <Toaster />
+        
         </div>
       </div>
     </div>  

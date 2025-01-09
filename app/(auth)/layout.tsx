@@ -1,4 +1,5 @@
 "use client"
+import { Toaster } from "@/components/ui/toaster";
 import { RootState } from "@/redux/store";
 import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
@@ -29,6 +30,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={raleway.className}>
       {children}
+            <Toaster />
+      
       </body>
     </html>
   );

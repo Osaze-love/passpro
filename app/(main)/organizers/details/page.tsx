@@ -11,6 +11,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import useOrganizer from "@/hooks/organizer";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import BarLoader from "react-spinners/BarLoader";
 
 const OrganizerDetails = () => {
   const [isAddOpen, setisAddOpen] = useState(false);
@@ -19,8 +23,84 @@ const OrganizerDetails = () => {
   const closeSubtractDialog = () => setisSubtractOpen(false);
   const [isBanOpen, setisBanOpen] = useState(false);
   const closeBanDialog = () => setisBanOpen(false);
+  const { activeOrganizer } = useSelector((state: RootState) => state.organizer);
+  const { addOrganizer, loading, updateOrganizer } = useOrganizer();
+  const [username, setUsername] = useState(activeOrganizer?.username || "");
+  const [organizationName, setOrganizationName] = useState(activeOrganizer?.organization_name || "");
+  const [firstName, setFirstName] = useState(activeOrganizer?.first_name || "");
+  const [lastName, setLastName] = useState(activeOrganizer?.last_name || "");
+  const [email, setEmail] = useState(activeOrganizer?.email || "");
+  const [phoneNumber, setPhoneNumber] = useState(activeOrganizer?.phone_number || "");
+  const [address, setAddress] = useState(activeOrganizer?.address || "");
+  const [city, setCity] = useState(activeOrganizer?.city || "");
+  const [state, setState] = useState(activeOrganizer?.state || "");
+  const [zipcode, setZipcode] = useState(activeOrganizer?.zipcode || "");
+  const [country, setCountry] = useState(activeOrganizer?.country || "");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [mobileVerification, setMobileVerification] = useState(
+    activeOrganizer?.mobile_verification === 1
+  );
+  
+  const [twoFactorAuth, setTwoFactorAuth] = useState(
+    activeOrganizer?.two_factor_auth === 1
+  );
+  
+  const [kycVerification, setKycVerification] = useState(
+    activeOrganizer?.kyc_verification === 1
+  );
+
+  const toggleState = (setter: React.Dispatch<React.SetStateAction<boolean>>) => {
+    setter((prev) => !prev);
+  };
+
+  const handleSubmit = async () => {
+    await updateOrganizer({
+      userId: activeOrganizer?.id ?? "",
+      username: username ?? "",
+      organization_name: organizationName ?? "",
+      first_name: firstName ?? "",
+      last_name: lastName ?? "",
+      email: email ?? "",
+      phone_number: phoneNumber ?? "",
+      address: address ?? "",
+      city: city ?? "",
+      state: state ?? "",
+      zipcode: zipcode ?? "",
+      country: country ?? "",
+      mobile_verification: mobileVerification ? 1 : 0,
+      two_factor_auth: twoFactorAuth ? 1 : 0,
+      kyc_verification: kycVerification ? 1 : 0,
+    });
+    
+
+    // setUsername("");
+    // setOrganizationName("");
+    // setFirstName("");
+    // setLastName("");
+    // setEmail("");
+    // setPhoneNumber("");
+    // setAddress("");
+    // setCity("");
+    // setState("");
+    // setZipcode("");
+    // setCountry("");
+    // setPassword("");
+    // setConfirmPassword("");
+    // setMobileVerification(false);
+    // setTwoFactorAuth(false);
+    // setKycVerification(false);
+  };
+  
   return (
     <div className="px-[43px] py-[40px] bg-[#fdf7f4]">
+       {loading && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-85">
+     
+        <BarLoader color="#FC6435" />
+       
+    </div> 
+  )}
       <section className="flex items-center justify-between mb-[57px]">
         <h3 className="text-[20px] font-semibold">
           Organizer Detail - TechyX360
@@ -38,7 +118,7 @@ const OrganizerDetails = () => {
           <div className="px-[18px]">
             <p className="text-white text-[14px]">Balance</p>
             <p className="text-[24px] text-white font-semibold mt-[11px]">
-              ₦450,000,000.00
+              ₦_
             </p>
           </div>
           <div className="bg-[#1D5793] px-[31px] h-full flex items-center justify-center rounded-tr-[8px] rounded-br-[8px]">
@@ -54,7 +134,7 @@ const OrganizerDetails = () => {
         <div className="flex items-center justify-between h-[100px] rounded-[8px] bg-[#089A47]">
           <div className="px-[18px]">
             <p className="text-white text-[14px]">Events</p>
-            <p className="text-[24px] text-white font-semibold mt-[11px]">20</p>
+            <p className="text-[24px] text-white font-semibold mt-[11px]">{activeOrganizer?.events?.length}</p>
           </div>
           <div className="bg-[#28C76F]  px-[31px] h-full flex items-center justify-center rounded-tr-[8px] rounded-br-[8px]">
             <Image
@@ -70,7 +150,7 @@ const OrganizerDetails = () => {
           <div className="px-[18px]">
             <p className="text-white text-[14px]">Withdrawal</p>
             <p className="text-[24px] text-white font-semibold mt-[11px]">
-              ₦450,000,000.00
+              ₦_
             </p>
           </div>
           <div className="bg-[#EE962A] px-[31px] h-full flex items-center justify-center rounded-tr-[8px] rounded-br-[8px]">
@@ -86,7 +166,7 @@ const OrganizerDetails = () => {
         <div className="flex items-center justify-between h-[100px] rounded-[8px] bg-[#B1350F]">
           <div className="px-[18px]">
             <p className="text-white text-[14px]">Transactions</p>
-            <p className="text-[24px] text-white font-semibold mt-[11px]">0</p>
+            <p className="text-[24px] text-white font-semibold mt-[11px]">{activeOrganizer?.transactions?.length}</p>
           </div>
           <div className="bg-[#D54113] px-[31px] h-full flex items-center justify-center rounded-tr-[8px] rounded-br-[8px]">
             <Image
@@ -161,185 +241,153 @@ const OrganizerDetails = () => {
           <p>Ban Organizer</p>
         </Button>
       </section>
-      <section className="bg-white p-[28px] mt-[34px]">
-        <div className="space-y-[44px]">
-          <div className="grid grid-cols-2 gap-[44px]">
-            <div className="grid w-full items-center gap-[8px]">
-              <Label htmlFor="username" className="">
-                <div className="flex items-start font-bold text-[14px] text-[#333333]">
-                  <p>Username</p>
-                  <span className="text-[#F24455] text-md">*</span>
-                </div>
-              </Label>
-              <Input
-                id="username"
-                className=" py-[8px] focus-visible:ring-0 focus-visible:ring-transparent px-4 shadow-sm"
-              />
-            </div>
-            <div className="grid w-full items-center gap-[8px]">
-              <Label htmlFor="organizationName" className="">
-                <div className="flex items-start font-bold text-[14px] text-[#333333]">
-                  <p>Organization Name</p>
-                  <span className="text-[#F24455] text-md">*</span>
-                </div>
-              </Label>
-              <Input
-                id="organizationName"
-                className=" py-[8px] focus-visible:ring-0 focus-visible:ring-transparent px-4 shadow-sm"
-              />
-            </div>
-            <div className="grid w-full items-center gap-[8px]">
-              <Label htmlFor="firstName" className="">
-                <div className="flex items-start font-bold text-[14px] text-[#333333]">
-                  <p>First Name</p>
-                  <span className="text-[#F24455] text-md">*</span>
-                </div>
-              </Label>
-              <Input
-                id="firstName"
-                className=" py-[8px] focus-visible:ring-0 focus-visible:ring-transparent px-4 shadow-sm"
-              />
-            </div>
-            <div className="grid w-full items-center gap-[8px]">
-              <Label htmlFor="lastName" className="">
-                <div className="flex items-start font-bold text-[14px] text-[#333333]">
-                  <p>Last Name</p>
-                  <span className="text-[#F24455] text-md">*</span>
-                </div>
-              </Label>
-              <Input
-                id="lastName"
-                className=" py-[8px] focus-visible:ring-0 focus-visible:ring-transparent px-4 shadow-sm"
-              />
-            </div>
-            <div className="grid w-full items-center gap-[8px]">
-              <Label htmlFor="email" className="">
-                <div className="flex items-start font-bold text-[14px] text-[#333333]">
-                  <p>Email</p>
-                </div>
-              </Label>
-              <Input
-                id="email"
-                className=" py-[8px] focus-visible:ring-0 focus-visible:ring-transparent px-4 shadow-sm"
-              />
-            </div>
-            <div className="grid w-full items-center gap-[8px]">
-              <Label htmlFor="phoneNumber" className="">
-                <div className="flex items-start font-bold text-[14px] text-[#333333]">
-                  <p>Phone Number</p>
-                </div>
-              </Label>
-              <Input
-                id="phoneNumber"
-                className=" py-[8px] focus-visible:ring-0 focus-visible:ring-transparent px-4 shadow-sm"
-              />
-            </div>
-          </div>
-          <div className="grid w-full items-center gap-[8px]">
-            <Label htmlFor="address" className="">
-              <div className="flex items-start font-bold text-[20px] text-[#333333]">
-                <p>Address</p>
-              </div>
-            </Label>
-            <Input
-              id="address"
-              className=" py-[8px] focus-visible:ring-0 focus-visible:ring-transparent px-4 shadow-sm"
-            />
-          </div>
-          <div className="grid grid-cols-4 gap-[38px]">
-            <div className="grid w-full items-center gap-[8px]">
-              <Label htmlFor="city" className="">
-                <div className="flex items-start font-bold text-[20px] text-[#333333]">
-                  <p>City</p>
-                </div>
-              </Label>
-              <Input
-                id="city"
-                className=" py-[8px] focus-visible:ring-0 focus-visible:ring-transparent px-4 shadow-sm"
-              />
-            </div>
-            <div className="grid w-full items-center gap-[8px]">
-              <Label htmlFor="state" className="">
-                <div className="flex items-start font-bold text-[20px] text-[#333333]">
-                  <p>State</p>
-                </div>
-              </Label>
-              <select
-                id="state"
-                className=" py-[8px] outline-none border rounded-[8px] px-4 shadow-sm"
-              >
-                <option value="lagos">Lagos</option>
-                <option value="abuja">Abuja</option>
-              </select>
-            </div>
-            <div className="grid w-full items-center gap-[8px]">
-              <Label htmlFor="zipcode/postal" className="">
-                <div className="flex items-start font-bold text-[20px] text-[#333333]">
-                  <p>Zipcode/Postal</p>
-                </div>
-              </Label>
-              <Input
-                id="zipcode/postal"
-                className=" py-[8px] focus-visible:ring-0 focus-visible:ring-transparent px-4 shadow-sm"
-              />
-            </div>
-            <div className="grid w-full items-center gap-[8px]">
-              <Label htmlFor="country" className="">
-                <div className="flex items-start font-bold text-[20px] text-[#333333]">
-                  <p>Country</p>
-                </div>
-              </Label>
-              <Input
-                id="country"
-                className=" py-[8px] focus-visible:ring-0 focus-visible:ring-transparent px-4 shadow-sm"
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-4 gap-[38px]">
-            <div className="grid w-full gap-[8px]">
-              <p className="text-[#37474F] text-[20px] font-semibold">
-                Email Verification
-              </p>
-              <div className="bg-[#089A47] flex items-center justify-between h-[50px] rounded-[8px]">
-                <p className="text-white pl-[27px] font-semibold">Verified</p>
-                <div className="bg-[#4E3D3D] h-full w-[16px] rounded-tr-[8px] rounded-br-[8px]"></div>
-              </div>
-            </div>
-            <div className="grid w-full gap-[8px]">
-              <p className="text-[#37474F] text-[20px] font-semibold">
-                Mobile Verification
-              </p>
-              <div className="bg-[#089A47] flex items-center justify-between h-[50px] rounded-[8px]">
-                <p className="text-white pl-[27px] font-semibold">Verified</p>
-                <div className="bg-[#4E3D3D] h-full w-[16px] rounded-tr-[8px] rounded-br-[8px]"></div>
-              </div>
-            </div>
-            <div className="grid w-full gap-[8px]">
-              <p className="text-[#37474F] text-[20px] font-semibold">2FA</p>
-              <div className="bg-[#EB2222] flex items-center justify-between h-[50px] rounded-[8px]">
-                <div className="bg-[#4E3D3D] h-full w-[16px] rounded-tl-[8px] rounded-bl-[8px]"></div>
-                <p className="text-white pl-[27px] font-semibold ">Disabled</p>
-                <div></div>
-              </div>
-            </div>
-            <div className="grid w-full gap-[8px]">
-              <p className="text-[#37474F] text-[20px] font-semibold">
-                KYC Verification
-              </p>
-              <div className="bg-[#089A47] flex items-center justify-between h-[50px] rounded-[8px]">
-                <p className="text-white pl-[27px] font-semibold">Verified</p>
-                <div className="bg-[#4E3D3D] h-full w-[16px] rounded-tr-[8px] rounded-br-[8px]"></div>
-              </div>
-            </div>
-          </div>
-          <Button
-            type="submit"
-            className="w-full py-[10px] shadow-sm font-bold text-white bg-[#FC6435] hover:bg-[#FC6435] transition-all active:scale-95"
-          >
-            Submit
-          </Button>
-        </div>
-      </section>
+       <section className="bg-white p-[28px] mt-[34px] space-y-[44px]">
+             <div className="grid grid-cols-2 gap-[44px]">
+               {[
+                 { label: "Username", value: username, setter: setUsername, required: true },
+                 {
+                   label: "Organization Name",
+                   value: organizationName,
+                   setter: setOrganizationName,
+                 },
+                 { label: "First Name", value: firstName, setter: setFirstName, required: true },
+                 { label: "Last Name", value: lastName, setter: setLastName, required: true },
+                 { label: "Email", value: email, setter: setEmail, required: true },
+                 { label: "Phone Number", value: phoneNumber, setter: setPhoneNumber, required: true },
+                 { label: "Address", value: address, setter: setAddress, required: true },
+                //  { label: "Password", value: password, setter: setPassword, required: true },
+                //  { label: "Confirm Password", value: confirmPassword, setter: setConfirmPassword, required: true },
+     
+               ].map(({ label, value, setter, required = false }, index) => (
+                 <div key={index} className="grid w-full items-center gap-[8px]">
+                   <Label htmlFor={label.toLowerCase().replace(" ", "")}>
+                     <div className="flex items-start font-bold text-[14px] text-[#333333]">
+                       <p>{label}</p>
+                       {required && <span className="text-[#F24455] text-md">*</span>}
+                     </div>
+                   </Label>
+                   <Input
+                     id={label.toLowerCase().replace(" ", "")}
+                     value={value}
+                     onChange={(e) => setter(e.target.value)}
+                     className="py-[8px] px-4 shadow-sm focus-visible:ring-0 focus-visible:ring-transparent"
+                   />
+                 </div>
+               ))}
+             </div>
+            
+     
+             {/* Additional Fields */}
+             <div className="grid grid-cols-4 gap-[38px]">
+               {[
+                 { label: "City", value: city, setter: setCity, required: true },
+                 { label: "State", value: state, setter: setState, required: true },
+                 { label: "Zipcode/Postal", value: zipcode, setter: setZipcode, required: true },
+                 { label: "Country", value: country, setter: setCountry, required: true },
+               ].map(({ label, value, setter, required = false }, index) => (
+                 <div key={index} className="grid w-full items-center gap-[8px]">
+                   <Label htmlFor={label.toLowerCase().replace(" ", "")}>
+                     <div className="flex items-start font-bold text-[14px] text-[#333333]">
+                       <p>{label}</p>
+                       {required && <span className="text-[#F24455] text-md">*</span>}
+                     </div>
+                   </Label>
+                   <Input
+                     id={label.toLowerCase().replace(" ", "")}
+                     value={value}
+                     onChange={(e) => setter(e.target.value)}
+                     className="py-[8px] px-4 shadow-sm focus-visible:ring-0 focus-visible:ring-transparent"
+                   />
+                 </div>
+               ))}
+             </div>
+             {/* Verification Toggles */}
+             <div className="grid grid-cols-3 gap-[38px]">
+           {/* Email Verification */}
+           
+     
+           {/* Mobile Verification */}
+           <div className="grid w-full gap-[8px]">
+             <p className="text-[#37474F] text-[20px] font-semibold">Mobile Verification</p>
+             <div
+               onClick={() => toggleState(setMobileVerification)}
+               className={`flex items-center justify-between h-[50px] rounded-[8px] transition-all duration-300 cursor-pointer ${
+                 mobileVerification ? "bg-[#089A47]" : "bg-[#EB2222]"
+               }`}
+             >
+               <p
+                 className={`text-white pl-[27px] font-semibold ${
+                   mobileVerification ? "opacity-100" : "opacity-50"
+                 }`}
+               >
+                 {mobileVerification ? "Verified" : "Disabled"}
+               </p>
+               <div
+                 className={`h-full w-[16px] ${
+                   mobileVerification
+                     ? "bg-[#4E3D3D] rounded-tr-[8px] rounded-br-[8px]"
+                     : "bg-[#4E3D3D] rounded-tl-[8px] rounded-bl-[8px]"
+                 }`}
+               ></div>
+             </div>
+           </div>
+     
+           {/* 2FA */}
+           <div className="grid w-full gap-[8px]">
+             <p className="text-[#37474F] text-[20px] font-semibold">2FA</p>
+             <div
+               onClick={() => toggleState(setTwoFactorAuth)}
+               className={`flex items-center justify-between h-[50px] rounded-[8px] transition-all duration-300 cursor-pointer ${
+                 twoFactorAuth ? "bg-[#089A47]" : "bg-[#EB2222]"
+               }`}
+             >
+               <p
+                 className={`text-white pl-[27px] font-semibold ${
+                   twoFactorAuth ? "opacity-100" : "opacity-50"
+                 }`}
+               >
+                 {twoFactorAuth ? "Verified" : "Disabled"}
+               </p>
+               <div
+                 className={`h-full w-[16px] ${
+                   twoFactorAuth
+                     ? "bg-[#4E3D3D] rounded-tr-[8px] rounded-br-[8px]"
+                     : "bg-[#4E3D3D] rounded-tl-[8px] rounded-bl-[8px]"
+                 }`}
+               ></div>
+             </div>
+           </div>
+     
+           {/* KYC Verification */}
+           <div className="grid w-full gap-[8px]">
+             <p className="text-[#37474F] text-[20px] font-semibold">KYC Verification</p>
+             <div
+               onClick={() => toggleState(setKycVerification)}
+               className={`flex items-center justify-between h-[50px] rounded-[8px] transition-all duration-300 cursor-pointer ${
+                 kycVerification ? "bg-[#089A47]" : "bg-[#EB2222]"
+               }`}
+             >
+               <p
+                 className={`text-white pl-[27px] font-semibold ${
+                   kycVerification ? "opacity-100" : "opacity-50"
+                 }`}
+               >
+                 {kycVerification ? "Verified" : "Disabled"}
+               </p>
+               <div
+                 className={`h-full w-[16px] ${
+                   kycVerification
+                     ? "bg-[#4E3D3D] rounded-tr-[8px] rounded-br-[8px]"
+                     : "bg-[#4E3D3D] rounded-tl-[8px] rounded-bl-[8px]"
+                 }`}
+               ></div>
+             </div>
+           </div>
+         </div>
+             <button className="mt-[20px] transition-all font-semibold active:scale-95 rounded-[8px] py-[14px] bg-[#FC6435] text-white w-full" onClick={handleSubmit}>
+               Submit 
+             </button>
+           </section>
       <Dialog open={isAddOpen} onOpenChange={closeAddDialog}>
         <DialogContent className="sm:max-w-[500px]  top-[34%]">
           <DialogTitle className="hidden"></DialogTitle>

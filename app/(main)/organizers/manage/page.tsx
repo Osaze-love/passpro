@@ -26,7 +26,7 @@ import { RootState } from "@/redux/store";
 
 const ManageOrganizer = () => {
   const router = useRouter();
-  const { getOrganizer, loading, toggleFeature } = useOrganizer();
+  const { getOrganizer, loading, toggleFeature, toggleRestriction, getOneOrganizer } = useOrganizer();
   const {organizers
 
   } = useSelector((state: RootState) => state.organizer);
@@ -50,13 +50,13 @@ const ManageOrganizer = () => {
               ? undefined
               : activeTab === "Active"
               ? "active"
-              : activeTab === "Banned"
-              ? "banned"
-              : activeTab === "Email Unverified"
-              ? "email_unverified"
-              : activeTab === "Phone Verified"
-              ? "phone_verified"
-              : 'kyc_verified'
+              : "banned"
+              // ? "banned"
+              // : activeTab === "Email Unverified"
+              // ? "email_unverified"
+              // : activeTab === "Phone Verified"
+              // ? "phone_verified"
+              // : 'kyc_verified'
             getOrganizer(filter);
           }, [activeTab]);
   return (
@@ -90,9 +90,9 @@ const ManageOrganizer = () => {
           "All",
           "Active",
           "Banned",
-          "Email Unverified",
-          "Phone Verified",
-          "KYC Verified",
+          // "Email Unverified",
+          // "Phone Verified",
+          // "KYC Verified",
         ].map((tab) => (
           <Button
             key={tab}
@@ -178,9 +178,10 @@ const ManageOrganizer = () => {
              
 
                 <TableCell className="text-center border-r w-[200px] ">
-                  <div className="flex items-center justify-end space-x-2">
-                  {data?.feature === 0 ? 
-                   <button
+                  <div className="flex items-center justify-center space-x-2">
+                  {activeTab === 'All' && data?.feature === 0 &&
+                  <>
+                  <button
                    className="bg-none border border-[#FC6435] rounded-[8px]  text-[#606060] flex items-center p-[10px] space-x-[8px] transition-all active:scale-95"
                    onClick={async() => {
                     setOrganizerId(data?.id);
@@ -188,28 +189,76 @@ const ManageOrganizer = () => {
                    }}
                  >
                    Feature
-                 </button> : 
+                 </button>
                  <button
-                 className="bg-none border border-[#FC6435] rounded-[8px]  text-[#606060] flex items-center p-[10px] space-x-[8px] transition-all active:scale-95"
-                 onClick={() => {
-                  setOrganizerId(data?.id);
-                   setisConfirmOpen(true);
-                 }}
-               >
-                 Unfeature
-               </button> 
-                }
-
-                   
-                    <button
                       className="bg-none border border-[#FC6435] rounded-[8px] p-[10px] text-[#FC6435] flex items-center space-x-[8px] transition-all active:scale-95"
-                      onClick={() => {
+                      onClick={async() => {
+                        await getOneOrganizer(data.id)
                         router.push("/organizers/details");
                       }}
                     >
                       Details
                     </button>
-                  </div>
+                  </>
+                    }
+
+         {activeTab === 'All' && data?.feature === 1 &&
+                  <>
+                  <button
+                   className="bg-none border border-[#FC6435] rounded-[8px]  text-[#606060] flex items-center p-[10px] space-x-[8px] transition-all active:scale-95"
+                   onClick={async() => {
+                    setOrganizerId(data?.id);
+                     setisConfirmOpen(true);
+                   }}
+                 >
+                   Unfeature
+                 </button>
+                 <button
+                      className="bg-none border border-[#FC6435] rounded-[8px] p-[10px] text-[#FC6435] flex items-center space-x-[8px] transition-all active:scale-95"
+                      onClick={async() => {
+                        await getOneOrganizer(data.id)
+                        router.push("/organizers/details");
+                      }}
+                    >
+                      Details
+                    </button>
+                  </>
+                    }
+
+       {activeTab === 'Active'  &&
+                  <>
+                  <button
+                   className="bg-none border border-[#FC6435] rounded-[8px]  text-[#FC6435] flex items-center p-[10px] space-x-[8px] transition-all active:scale-95"
+                   onClick={async() => {
+                    await toggleRestriction(data?.id);
+                    await getOrganizer('active')
+
+                   }}
+                 >
+                  <Image src='/icons/banIcon.svg' width={14} height={14} alt="image"/>
+                  <p>Ban</p> 
+                 </button>
+                 
+                  </>
+                    }
+
+{activeTab === 'Banned'  &&
+                  <>
+                  <button
+                   className="bg-none border border-[#34C759] rounded-[8px]  text-[#34C759] flex items-center p-[10px] space-x-[8px] transition-all active:scale-95"
+                   onClick={async() => {
+                    await toggleRestriction(data?.id);
+                    await getOrganizer('banned')
+
+                   }}
+                 >
+                  <Image src='/icons/activateIcon.svg' width={14} height={14} alt="image"/>
+                  <p>Activate</p> 
+                 </button>
+                 
+                  </>
+                    }
+                 </div>
                 </TableCell>
               </TableRow>
             ))}
@@ -249,6 +298,7 @@ const ManageOrganizer = () => {
                 onClick={async() => {
                   setisConfirmOpen(false);
                   await toggleFeature(organizerId);
+                  await getOrganizer();
                 }}
               >
                 Yes
