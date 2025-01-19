@@ -25,19 +25,20 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <body className={raleway.className}>
      <div className=" min-h-screen flex flex-col">
-      <div className="flex flex-grow">
-        <div className="hidden md:flex sticky top-0 w-[278px]  h-screen  overflow-y-scroll scrollbar-hide">
-          {/* <div className="overflow-y-scroll overflow-x-hidden h-full scrollbar-hide"> */}
-          <Sidebar />
-          {/* </div> */}
-        </div>
-        <div className="w-full">
-          <Navbar />
-          {children}
-                <Toaster />
-        
-        </div>
-      </div>
+     <div className="flex">
+  {/* Sidebar */}
+  <div className="hidden md:flex sticky top-0 h-screen w-[240px] flex-shrink-0 overflow-y-scroll scrollbar-hide">
+    <Sidebar />
+  </div>
+
+  {/* Main Content */}
+  <div className="flex-grow w-full">
+    <Navbar />
+    {children}
+    <Toaster />
+  </div>
+</div>
+
     </div>  
     </body>
     

@@ -6,6 +6,8 @@ import useOrganizer from "@/hooks/organizer";
 import Image from "next/image";
 import React, { useState } from "react";
 import BarLoader from "react-spinners/BarLoader";
+import { toast } from "@/hooks/use-toast";
+
 
 const AddOrganizer = () => {
   // Define state for each field
@@ -28,11 +30,44 @@ const AddOrganizer = () => {
   const [twoFactorAuth, setTwoFactorAuth] = useState(false);
   const [kycVerification, setKycVerification] = useState(false);
 
+
   const toggleState = (setter: React.Dispatch<React.SetStateAction<boolean>>) => {
     setter((prev) => !prev);
   };
+  const validatePhoneNumber = (number: string) => {
+    const phoneRegex = /^[0-9]{1,11}$/; 
+    return phoneRegex.test(number);
+  };
+
+  const validateEmail = (email: string) => {
+    return email.includes("@");
+  };
 
   const handleSubmit = async () => {
+
+    if (!validatePhoneNumber(phoneNumber)) {
+      toast({
+        variant: "destructive",
+        description:'Phone number must be numeric and up to 11 digits.', 
+      })
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      toast({
+        variant: "destructive",
+        description:'Please enter a valid email address with @', 
+      })
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast({
+        variant: "destructive",
+        description:'Password and Confirm Password must match.', 
+      })
+      return;
+    }
     await addOrganizer({
       username,
       organization_name: organizationName,

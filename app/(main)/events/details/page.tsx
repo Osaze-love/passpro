@@ -207,46 +207,24 @@ const Details = () => {
             </div>
           </div>
 
-          {/* <div className="w-full rounded-[8px] bg-white px-[32px] pb-[32px]">
-            <p className="text-[20px] text-[#606060] py-[32px] font-semibold">
-              Time Slots
-            </p>
-
-            <Accordion
-              type="single"
-              collapsible
-              className="w-full transition-all "
-            >
-              <AccordionItem value="item-1">
-                <AccordionTrigger className="accordion-trigger rounded-tr-[8px] rounded-tl-[8px] bg-[#FC6435] hover:no-underline text-white px-4">
-                  <p>2024-10-21</p>
-                  <div className={`transition-transform duration-200 `}>
-                    <Image
-                      src={"/icons/accordionwhite.svg"}
-                      alt="right arrow"
-                      width={8}
-                      height={13}
-                      className="transition-transform duration-200 data-[state=open]:rotate-90"
-                    />
+          {activeEvent?.tickets?.map((ticket:any, index:any) => (
+                  <div key={index} className="w-full my-[10px] p-[10px] border border-[#d9d9d9]  rounded-[12px] grid items-center grid-cols-6">
+                  <div className='col-span-3'>
+                  <p>{ticket?.ticket_name}</p>
+                  <p className="text-[#8F8F8F] text-[10px]">{ticket?.ticket_description}</p>
                   </div>
-                </AccordionTrigger>
-                <AccordionContent className="bg-[#FFF3EF] px-4 border-transparent">
-                  <div className="py-[16px] border-b border-b-[#8F8F8F] ">
-                    <p className="text-[#606060] font-semibold">Time</p>
-                    <p className="text-[14px] text-[#606060]">18:00 - 19:00</p>
+                  <div className="col-span-1 h-full w-[1px] bg-[#D9D9D9]">
+    
                   </div>
-                  <div className="py-[16px] border-b border-b-[#8F8F8F] ">
-                    <p className="text-[#606060] font-semibold">Title</p>
-                    <p className="text-[14px] text-[#606060]">Intervalo 1</p>
+    
+                  <div className="col-span-2 space-y-[5px]">
+                    <p>₦{ticket?.ticket_price}</p>
+                    <p className="text-[#FC6435]">{ticket?.ticket_quantity} unit(s) available</p>
                   </div>
-                  <div className="py-[16px] border-b border-b-[#8F8F8F] ">
-                    <p className="text-[#606060] font-semibold">Description</p>
-                    <p className="text-[14px] text-[#606060]">dasd</p>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </div> */}
+                 
+                </div>
+           ))}
+           
         </div>
         <div className="col-span-3 ">
           <div className="w-full bg-white p-[32px] rounded-[8px] mb-[24px]">

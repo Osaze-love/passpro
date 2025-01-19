@@ -4,7 +4,8 @@
   import { useRouter } from "next/navigation";
   import { useState } from "react";
   import { useDispatch, useSelector } from "react-redux";
-import { updateUserDetail, updateUserToken } from "@/redux/slices/userslice";
+import { resetState, updateUserDetail, updateUserToken } from "@/redux/slices/userslice";
+import { toast } from "./use-toast";
 // import { updateUser } from "@/redux/slices/adminslice";
   
   const useLogin = () => {
@@ -17,23 +18,27 @@ import { updateUserDetail, updateUserToken } from "@/redux/slices/userslice";
   
     const [loading, setLoading] = useState(false);
     
-    const login = async (email?:string, password?:string ) => {
+    const login = async (email:string, password:string, remember: boolean ) => {
       setLoading(true);
       try {  
-        const response = await axios.post(`${base_url}/login`, {
+        const response = await axios.post(`${base_url}/admin/login`, {
           identifier: email,
-          password: password
+          password: password,
+          remember_me: remember,
       });    
       dispatch(updateUserDetail(response?.data?.user))
       dispatch(updateUserToken(response?.data?.token))
+      
+      toast({
+        description: 'Login Successful', 
+      })
       router.push('/dashboard')      
       } catch (error: any) {
-        // toast({
-        //   variant: "destructive",
-        //   title: "Uh oh! Something went wrong.",
-        //   description: error.response?.data?.message || 'An unexpected error occurred.', 
-        // })
-        // console.error(error);
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: error.response?.data?.message || 'An unexpected error occurred.', 
+        })
        
       } finally {
         setLoading(false);
@@ -58,12 +63,15 @@ import { updateUserDetail, updateUserToken } from "@/redux/slices/userslice";
       dispatch(updateUserDetail(response?.data?.data))
       // dispatch(updateUserToken(response?.data?.token))
       } catch (error: any) {
-        // toast({
-        //   variant: "destructive",
-        //   title: "Uh oh! Something went wrong.",
-        //   description: error.response?.data?.message || 'An unexpected error occurred.', 
-        // })
-        console.error(error);
+        if (error.response?.data?.message === "Unauthenticated.") {
+          dispatch(resetState());
+        }else{
+          toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: error.response?.data?.message || 'An unexpected error occurred.', 
+        })
+        }
        
       } finally {
         setLoading(false);
@@ -90,12 +98,16 @@ import { updateUserDetail, updateUserToken } from "@/redux/slices/userslice";
       dispatch(updateUserDetail(response?.data?.data))
       // dispatch(updateUserToken(response?.data?.token))
       } catch (error: any) {
-        // toast({
-        //   variant: "destructive",
-        //   title: "Uh oh! Something went wrong.",
-        //   description: error.response?.data?.message || 'An unexpected error occurred.', 
-        // })
-        console.error(error);
+        if (error.response?.data?.message === "Unauthenticated.") {
+          dispatch(resetState());
+        }else{
+          toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: error.response?.data?.message || 'An unexpected error occurred.', 
+        })
+        }
+       
        
       } finally {
         setLoading(false);

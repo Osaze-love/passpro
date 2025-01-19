@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -15,16 +15,26 @@ import useOrganizer from "@/hooks/organizer";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import BarLoader from "react-spinners/BarLoader";
+import { toast } from "@/hooks/use-toast";
 
 const OrganizerDetails = () => {
   const [isAddOpen, setisAddOpen] = useState(false);
-  const closeAddDialog = () => setisAddOpen(false);
+  const [amount, setAmount] = useState('');
+  const [remark, setRemark] = useState('');
+  const closeAddDialog = () => {setisAddOpen(false);
+    setAmount('');
+    setRemark('')
+  };
   const [isSubtractOpen, setisSubtractOpen] = useState(false);
-  const closeSubtractDialog = () => setisSubtractOpen(false);
+  const closeSubtractDialog = () => {setisSubtractOpen(false)
+    setAmount('');
+    setRemark('')
+  };
   const [isBanOpen, setisBanOpen] = useState(false);
   const closeBanDialog = () => setisBanOpen(false);
-  const { activeOrganizer } = useSelector((state: RootState) => state.organizer);
-  const { addOrganizer, loading, updateOrganizer } = useOrganizer();
+  const { activeOrganizer, countData } = useSelector((state: RootState) => state.organizer);
+  const { addOrganizer, loading, updateOrganizer, addBalance, subtractBalance, getOneOrganizer, toggleRestriction, getOneWithdrawalCount } = useOrganizer();
+ 
   const [username, setUsername] = useState(activeOrganizer?.username || "");
   const [organizationName, setOrganizationName] = useState(activeOrganizer?.organization_name || "");
   const [firstName, setFirstName] = useState(activeOrganizer?.first_name || "");
@@ -54,6 +64,12 @@ const OrganizerDetails = () => {
     setter((prev) => !prev);
   };
 
+  useEffect(() => {
+     getOneOrganizer(activeOrganizer?.id);
+     getOneWithdrawalCount(activeOrganizer?.id);
+
+  }, [])
+
   const handleSubmit = async () => {
     await updateOrganizer({
       userId: activeOrganizer?.id ?? "",
@@ -72,7 +88,8 @@ const OrganizerDetails = () => {
       two_factor_auth: twoFactorAuth ? 1 : 0,
       kyc_verification: kycVerification ? 1 : 0,
     });
-    
+    await getOneOrganizer(activeOrganizer?.id);
+    await getOneWithdrawalCount(activeOrganizer?.id);
 
     // setUsername("");
     // setOrganizationName("");
@@ -118,7 +135,7 @@ const OrganizerDetails = () => {
           <div className="px-[18px]">
             <p className="text-white text-[14px]">Balance</p>
             <p className="text-[24px] text-white font-semibold mt-[11px]">
-              ₦_
+              ₦{activeOrganizer?.balance}
             </p>
           </div>
           <div className="bg-[#1D5793] px-[31px] h-full flex items-center justify-center rounded-tr-[8px] rounded-br-[8px]">
@@ -150,7 +167,7 @@ const OrganizerDetails = () => {
           <div className="px-[18px]">
             <p className="text-white text-[14px]">Withdrawal</p>
             <p className="text-[24px] text-white font-semibold mt-[11px]">
-              ₦_
+              ₦{countData?.successfulWithdrawalTotal}
             </p>
           </div>
           <div className="bg-[#EE962A] px-[31px] h-full flex items-center justify-center rounded-tr-[8px] rounded-br-[8px]">
@@ -226,10 +243,11 @@ const OrganizerDetails = () => {
           />
           <p>Add Notifications</p>
         </Button>
-        <Button
+        {activeOrganizer?.status === 'active' ?  <Button
           className="shadow-sm font-semibold text-[14px] text-white bg-[#1215C4] hover:bg-[#1215C4] transition-all active:scale-95 flex items-center space-x-[12px]"
-          onClick={() => {
-            setisBanOpen(true);
+          onClick={ async() => {
+          await toggleRestriction(activeOrganizer.id);
+          await getOneOrganizer(activeOrganizer.id)
           }}
         >
           <Image
@@ -239,7 +257,24 @@ const OrganizerDetails = () => {
             alt="banorganizer"
           />
           <p>Ban Organizer</p>
-        </Button>
+        </Button> :
+         <Button
+         className="shadow-sm font-semibold text-[14px] text-white bg-[#1215C4] hover:bg-[#1215C4] transition-all active:scale-95 flex items-center space-x-[12px]"
+         onClick={ async() => {
+          await toggleRestriction(activeOrganizer.id);
+          await getOneOrganizer(activeOrganizer.id)
+         }}
+       >
+         <Image
+           src={"/logo/banorganizer.svg"}
+           height={24}
+           width={24}
+           alt="banorganizer"
+         />
+         <p>Activate Organizer</p>
+       </Button>
+        }
+       
       </section>
        <section className="bg-white p-[28px] mt-[34px] space-y-[44px]">
              <div className="grid grid-cols-2 gap-[44px]">
@@ -404,6 +439,10 @@ const OrganizerDetails = () => {
               </Label>
               <Input
                 id="amount"
+                value={amount}
+                onChange={(e) => {
+                  setAmount(e.target.value)
+                }}
                 className=" py-[8px] focus-visible:ring-0 focus-visible:ring-transparent px-4 shadow-sm"
               />
             </div>
@@ -416,13 +455,30 @@ const OrganizerDetails = () => {
               </Label>
               <Textarea
                 id="remark"
+                value={remark}
+                onChange={(e) => {
+                  setRemark(e.target.value)
+                }}
                 className=" py-[8px] h-[178px] focus-visible:ring-0 focus-visible:ring-transparent px-4 shadow-sm"
               />
             </div>
           </div>
 
           <DialogFooter>
-            <Button className="shadow-sm w-full font-bold text-white bg-[#FC6435] hover:bg-[#FC6435] transition-all  active:scale-95">
+            <Button
+             onClick={async() => {
+              if(amount && remark){
+                closeAddDialog();
+               await addBalance(activeOrganizer.id, amount, remark);
+               await getOneOrganizer(activeOrganizer.id)
+              }else{
+                toast({
+                  variant: "destructive",
+                  description:'Kindly fill in the fields', 
+                })
+              }
+            }}
+            className="shadow-sm w-full font-bold text-white bg-[#FC6435] hover:bg-[#FC6435] transition-all  active:scale-95">
               Submit
             </Button>
           </DialogFooter>
@@ -444,6 +500,10 @@ const OrganizerDetails = () => {
               </Label>
               <Input
                 id="amount"
+                value={amount}
+                onChange={(e) => {
+                  setAmount(e.target.value)
+                }}
                 className=" py-[8px] focus-visible:ring-0 focus-visible:ring-transparent px-4 shadow-sm"
               />
             </div>
@@ -456,13 +516,30 @@ const OrganizerDetails = () => {
               </Label>
               <Textarea
                 id="remark"
+                value={remark}
+                onChange={(e) => {
+                  setRemark(e.target.value)
+                }}
                 className=" py-[8px] h-[178px] focus-visible:ring-0 focus-visible:ring-transparent px-4 shadow-sm"
               />
             </div>
           </div>
 
           <DialogFooter>
-            <Button className="shadow-sm w-full font-bold text-white bg-[#FC6435] hover:bg-[#FC6435] transition-all  active:scale-95">
+            <Button 
+            onClick={async() => {
+              if(amount && remark){
+                closeSubtractDialog();
+               await subtractBalance(activeOrganizer.id, amount, remark);
+               await getOneOrganizer(activeOrganizer.id)
+              }else{
+                toast({
+                  variant: "destructive",
+                  description:'Kindly fill in the fields', 
+                })
+              }
+            }}
+            className="shadow-sm w-full font-bold text-white bg-[#FC6435] hover:bg-[#FC6435] transition-all  active:scale-95">
               Submit
             </Button>
           </DialogFooter>

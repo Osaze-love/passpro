@@ -18,131 +18,47 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import BarLoader from "react-spinners/BarLoader";
 import { updateActiveWithdrawal } from "@/redux/slices/withdrawslice";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
+import useOrganizer from "@/hooks/organizer";
 
 const Withdrawals = () => {
-  const { getWithdrawals, loading } = useWithdraw();
-  const {withdrawals} = useSelector((state: RootState) => state.withdraw);
+  const { getWithdrawals, loading, getWithdrawalCount } = useWithdraw();
+  const {withdrawals, current_page, from, last_page, per_page, to, total, countData} = useSelector((state: RootState) => state.withdraw);
+  const {getOneOrganizer, oneLoading, getOneWithdrawalCount} = useOrganizer();
   const router = useRouter();
   const dispatch = useDispatch();
+  const [query, setQuery] = useState('');
+  
      
   useEffect(() => {
-     getWithdrawals();
-    },[]);
-  const withdrawalsData = [
-    {
-      gateway: "Bank",
-      transaction: "BDS7DYQYW18W",
-      initiated: "2024-05-10 10:51 AM",
-      months: "3 months ago",
-      type: "User",
-      username: "Car Shows",
-      amount: "$900",
-      total: "$30.00",
-      conversion: "No",
-      status: "Pending",
-    },
-    {
-      gateway: "Bank",
-      transaction: "BDS7DYQYW18W",
-      initiated: "2024-05-10 10:51 AM",
-      months: "3 months ago",
-      type: "User",
-      username: "Car Shows",
-      amount: "$900",
-      total: "$30.00",
-      conversion: "No",
-      status: "Pending",
-    },
-    {
-      gateway: "Bank",
-      transaction: "BDS7DYQYW18W",
-      initiated: "2024-05-10 10:51 AM",
-      months: "3 months ago",
-      type: "User",
-      username: "Car Shows",
-      amount: "$900",
-      total: "$30.00",
-      conversion: "No",
-      status: "Pending",
-    },
-    {
-      gateway: "Bank",
-      transaction: "BDS7DYQYW18W",
-      initiated: "2024-05-10 10:51 AM",
-      months: "3 months ago",
-      type: "User",
-      username: "Car Shows",
-      amount: "$900",
-      total: "$30.00",
-      conversion: "No",
-      status: "Pending",
-    },
-    {
-      gateway: "Bank",
-      transaction: "BDS7DYQYW18W",
-      initiated: "2024-05-10 10:51 AM",
-      months: "3 months ago",
-      type: "User",
-      username: "Car Shows",
-      amount: "$900",
-      total: "$30.00",
-      conversion: "No",
-      status: "Pending",
-    },
-    {
-      gateway: "Bank",
-      transaction: "BDS7DYQYW18W",
-      initiated: "2024-05-10 10:51 AM",
-      months: "3 months ago",
-      type: "User",
-      username: "Car Shows",
-      amount: "$900",
-      total: "$30.00",
-      conversion: "No",
-      status: "Pending",
-    },
-    {
-      gateway: "Bank",
-      transaction: "BDS7DYQYW18W",
-      initiated: "2024-05-10 10:51 AM",
-      months: "3 months ago",
-      type: "User",
-      username: "Car Shows",
-      amount: "$900",
-      total: "$30.00",
-      conversion: "No",
-      status: "Pending",
-    },
-    {
-      gateway: "Bank",
-      transaction: "BDS7DYQYW18W",
-      initiated: "2024-05-10 10:51 AM",
-      months: "3 months ago",
-      type: "User",
-      username: "Car Shows",
-      amount: "$900",
-      total: "$30.00",
-      conversion: "No",
-      status: "Pending",
-    },
-    {
-      gateway: "Bank",
-      transaction: "BDS7DYQYW18W",
-      initiated: "2024-05-10 10:51 AM",
-      months: "3 months ago",
-      type: "User",
-      username: "Car Shows",
-      amount: "$900",
-      total: "$30.00",
-      conversion: "No",
-      status: "Pending",
-    },
-  ];
+    if (query === '') {
+      const search = activeTab === "All"
+      ? undefined
+      : activeTab === "Approved"
+      ? "approved"
+      : activeTab === "Pending"
+      ? "pending"
+      : "rejected"
+      getWithdrawals(search,query, 1);
+      getWithdrawalCount();
+
+    }
+    },[query]);
+ 
   const [activeTab, setActiveTab] = useState("All");
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
   };
+  
 
    useEffect(() => {
           const search = activeTab === "All"
@@ -152,11 +68,11 @@ const Withdrawals = () => {
             : activeTab === "Pending"
             ? "pending"
             : "rejected"
-          getWithdrawals(search);
+          getWithdrawals(search, query, 1);
         }, [activeTab]);
   return (
     <div className="px-[43px] py-[40px] bg-[#fdf7f4]">
-       {loading && (
+       {(loading || oneLoading) && (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-85">
      
         <BarLoader color="#FC6435" />
@@ -168,10 +84,25 @@ const Withdrawals = () => {
         <div className="flex items-center space-x-[24px]">
           <div className="flex w-[277px] h-[48px] items-center border rounded-[8px]  bg-white">
             <Input
-              placeholder="Username / Email"
-              className=" focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 border-0 grow text-black placeholder:text-[#D9D9D9] bg-transparent placeholder:text-[12px] "
+              placeholder="Search Here"
+              onChange={(e) => {
+                setQuery(e.target.value)
+               }}
+              className="shadow-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 border-0 grow text-black placeholder:text-[#D9D9D9] bg-transparent placeholder:text-[12px] "
             />
-            <div className="bg-[#FC6435] h-full flex w-max justify-center items-center cursor-pointer px-[20px] rounded-tr-[8px] rounded-br-[8px]">
+            <div
+             onClick={async() => {
+              const search = activeTab === "All"
+              ? undefined
+              : activeTab === "Approved"
+              ? "approved"
+              : activeTab === "Pending"
+              ? "pending"
+              : "rejected"
+            
+                getWithdrawals(query, search, current_page);
+             }}
+            className="bg-[#FC6435] h-full flex w-max justify-center items-center cursor-pointer px-[20px] rounded-tr-[8px] rounded-br-[8px]">
               <Image
                 src={"/icons/searchIconwhite.svg"}
                 width={20}
@@ -180,7 +111,7 @@ const Withdrawals = () => {
               />
             </div>
           </div>
-          <div className="flex w-[277px] h-[48px] items-center border rounded-[8px]  bg-white">
+          {/* <div className="flex w-[277px] h-[48px] items-center border rounded-[8px]  bg-white">
             <Input
               placeholder="Start Date - End Date"
               className=" focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 border-0 grow text-black placeholder:text-[#D9D9D9] bg-transparent placeholder:text-[12px] "
@@ -193,7 +124,7 @@ const Withdrawals = () => {
                 alt="searchIcon"
               />
             </div>
-          </div>
+          </div> */}
         </div>
       </section>
       <section className="flex items-center space-x-[10px]">
@@ -222,7 +153,7 @@ const Withdrawals = () => {
               alt="logousers"
             />
             <div className="gap-[8px]">
-              <p className="font-medium ">₦-</p>
+              <p className="font-medium ">₦{countData.successfulWithdrawalTotal}</p>
               <h2 className="font-medium text-[14px] text-[#8F8F8F]">
                 Approved Withdrawal
               </h2>
@@ -246,7 +177,7 @@ const Withdrawals = () => {
               alt="logousers"
             />
             <div className="gap-[8px]">
-              <p className="font-medium ">₦-</p>
+              <p className="font-medium ">₦{countData?.pendingWithdrawalTotal}</p>
               <h2 className="font-medium text-[14px] text-[#8F8F8F]">
                 Pending Withdrawal
               </h2>
@@ -270,7 +201,7 @@ const Withdrawals = () => {
               alt="logousers"
             />
             <div className="gap-[8px]">
-              <p className="font-medium ">₦-</p>
+              <p className="font-medium ">₦{countData?.rejectedWithdrawalTotal}</p>
               <h2 className="font-medium text-[14px] text-[#8F8F8F]">
                 Rejected Withdrawal
               </h2>
@@ -324,27 +255,38 @@ const Withdrawals = () => {
             {withdrawals?.map((data, index) => (
               <TableRow key={index}>
                 <TableCell className=" h-[75px] text-[#606060]  border-l ">
-                  <p className="text-[#FC6435]"> Bank</p>
+                  <p className="text-[#FC6435]"> Bank | {data?.id}</p>
                   <p className="text-[14px]">{data?.bank_name}</p>
                 </TableCell>
-                <TableCell className="text-[#606060] text-center">
-                  {data?.initiated_at}
-                </TableCell>
+               <TableCell className="text-[#606060] text-center">
+               {data?.initiated_at?.split("T")[0]} {data?.initiated_at?.split("T")[1]?.slice(0, 8)}
+             </TableCell>
                 <TableCell className="text-[#606060] font-medium text-center">
                   {data?.type}
                 </TableCell>
-                <TableCell className="text-[#606060] text-center">
-                  {data?.user_full_name}
+                <TableCell
+                
+                className="text-[#606060] text-center">
+                  <p onClick={async() => {
+                    await getOneOrganizer(data?.user_id);
+                    await getOneWithdrawalCount(data?.user_id);
+                    router.push("/organizers/details");
+                  }}
+                  className="cursor-pointer"
+                  >
+                                      {data?.user_full_name}
+
+                  </p>
                   {/* <p className="text-[14px] text-[#FC6435]">@{data?.username}</p> */}
                 </TableCell>
                 <TableCell className="text-[#606060]  text-center">
                   <p>
-                    {data?.amount}
+                  ₦{data?.amount}
                   </p>
                 </TableCell>
                 <TableCell className="text-center">
                   
-                  <p className="text-[14px]">{data?.charge}</p>
+                  <p className="text-[14px]">₦{data?.charge}</p>
                 </TableCell>
                 <TableCell>
                   {data?.status === 'approved' && <p className="w-[99px]  rounded-[20px] flex items-center justify-center bg-[#e4f5e9] border border-[#4AC971] text-[#4AC971] p-[5px]">
@@ -374,6 +316,113 @@ const Withdrawals = () => {
           </TableBody>
         </Table>
       </section>
+
+      <section className="flex items-center justify-between">
+  <p className="text-[#606060] text-[14px]">
+    Showing {from} to {to} of {total} results
+  </p>
+  <Pagination className="flex items-center justify-end">
+    <PaginationContent>
+      {/* Previous Button */}
+      <PaginationItem>
+        <PaginationPrevious
+          href="#"
+          onClick={() => {
+            if (current_page > 1) {
+              const search = activeTab === "All"
+            ? undefined
+            : activeTab === "Approved"
+            ? "approved"
+            : activeTab === "Pending"
+            ? "pending"
+            : "rejected"
+          
+              getWithdrawals(search, query, current_page - 1);
+            }
+          }}
+          // disabled={current_page === 1}
+          className={`px-3 py-1 rounded ${
+            current_page === 1
+              ? "cursor-not-allowed bg-gray-200 text-gray-500"
+              : "cursor-pointer hover:bg-gray-100"
+          }`}
+        >
+          Prev
+        </PaginationPrevious>
+      </PaginationItem>
+
+
+      {Array.from({ length: last_page }, (_, index) => index + 1)
+                  .filter((page) => {
+                    // Show the first three and last three pages, or the current page
+                    return (
+                      page <= 3 || 
+                      page > last_page - 3 || 
+                      (page >= current_page - 1 && page <= current_page + 1)
+                    );
+                  })
+                  .map((page, index, filteredPages) => (
+                    <React.Fragment key={page}>
+                      {/* Add ellipsis if needed */}
+                      {index > 0 && page !== filteredPages[index - 1] + 1 && (
+                        <PaginationEllipsis />
+                      )}
+                      <PaginationItem>
+                        <PaginationLink
+                          href="#"
+                          onClick={() => {
+                            const search = activeTab === "All"
+                          ? undefined
+                          : activeTab === "Approved"
+                          ? "approved"
+                          : activeTab === "Pending"
+                          ? "pending"
+                          : "rejected"
+                        
+                            getWithdrawals(search, query, page);
+                            }}
+                          className={`px-3 py-1 rounded ${
+                            page === current_page
+                              ? "border border-[#FC6435] text-[#FC6435] hover:text-[#FC6435] font-bold"
+                              : "border text-[#8F8F8F]"
+                          }`}
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    </React.Fragment>
+                  ))}
+
+      {/* Next Button */}
+      <PaginationItem>
+        <PaginationNext
+          href="#"
+          onClick={() => {
+            if (current_page < last_page) {
+              const search = activeTab === "All"
+            ? undefined
+            : activeTab === "Approved"
+            ? "approved"
+            : activeTab === "Pending"
+            ? "pending"
+            : "rejected"
+          
+              getWithdrawals(search, query, current_page + 1);
+            }
+          }}
+          // disabled={current_page === last_page}
+          className={`px-3 py-1 rounded ${
+            current_page === last_page
+              ? "cursor-not-allowed bg-gray-200 text-gray-500"
+              : "cursor-pointer hover:bg-gray-100"
+          }`}
+        >
+          Next
+        </PaginationNext>
+      </PaginationItem>
+    </PaginationContent>
+  </Pagination>
+</section>
     </div>
   );
 };

@@ -14,6 +14,12 @@ import {
 } from "@/components/ui/tooltip"
 import { useRouter } from "next/navigation";
 import { resetState } from "@/redux/slices/userslice";
+import Link from "next/link";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
 const Navbar = () => {
   const {usersDetail} = useSelector((state: RootState) => state.user);
@@ -41,12 +47,17 @@ const Navbar = () => {
           height={30}
           alt="supportIcon"
         />
+        <Link href={'https://passpro.africa/'}
+        target="_blank"
+        >
         <Image
           src={"/icons/globeIcon.svg"}
           width={30}
           height={30}
           alt="globeIcon"
         />
+        </Link>
+        
         <Image
           src={"/icons/settingsIcon.svg"}
           width={30}
@@ -59,11 +70,10 @@ const Navbar = () => {
           height={30}
           alt="notificationIcon"
         />
-        
-        <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-        <div className="cursor-pointer space-x-[6px] flex items-center">
+         
+         <Popover>
+      <PopoverTrigger asChild>
+      <div className="cursor-pointer space-x-[6px] flex items-center">
           <Avatar>
             <AvatarImage
               src={`https://sub.passpro.africa/storage/${usersDetail?.profile_image}`}
@@ -83,9 +93,9 @@ const Navbar = () => {
             className="rotate-90"
           />
         </div>
-        </TooltipTrigger>
-        <TooltipContent className="bg-white px-0">
-          <div className="bg-white flex flex-col gap-[20px] rounded-[8px] ">
+      </PopoverTrigger>
+      <PopoverContent className="bg-white px-0 w-[200px]">
+      <div className="bg-white flex flex-col gap-[20px] rounded-[8px] ">
             <p 
             onClick={() => {
               router.push('/profile')
@@ -97,9 +107,19 @@ const Navbar = () => {
              }}
             className="px-[30px] py-[9px] font-semibold text-[#343434] cursor-pointer">Logout</p>
           </div>
+      </PopoverContent>
+      </Popover>
+
+        {/* <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+       
+        </TooltipTrigger>
+        <TooltipContent className="">
+          
         </TooltipContent>
       </Tooltip>
-    </TooltipProvider>
+    </TooltipProvider> */}
    
       </div>
     </div>

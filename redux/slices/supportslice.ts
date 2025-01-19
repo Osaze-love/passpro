@@ -4,6 +4,10 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 const initialState = {
   supportTickets: [] as any[], 
   activeTicket: {} as any,
+  current_page: 1,
+last_page: 0,
+per_page: 10,
+total : 0,
 };
 
 // Redux slice
@@ -17,6 +21,11 @@ export const supportslice = createSlice({
       updateActiveTicket: (state, action: PayloadAction<any>) => {
         state.activeTicket = action.payload;
       },
+      updateSupportPagination: (state, action: PayloadAction<any>) => {
+        state.current_page = action.payload.current_page;
+        state.last_page = action.payload.last_page;
+        state.total = action.payload.total
+      },
   
    
   },
@@ -26,6 +35,7 @@ export const supportslice = createSlice({
 export const {
  updateSupportTickets,
  updateActiveTicket,
+ updateSupportPagination
 //  updateUserToken,
 } = supportslice.actions;
 

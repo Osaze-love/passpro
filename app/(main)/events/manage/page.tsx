@@ -24,16 +24,29 @@ import { RootState } from "@/redux/store";
 import useEvent from "@/hooks/events";
 import BarLoader from "react-spinners/BarLoader";
 import { updateActiveEvent } from "@/redux/slices/eventslice";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 
 const ManageEvents = () => {
-  const {events} = useSelector((state: RootState) => state.event);
-  const { loading, getEvents } = useEvent();
+  const {events, current_page, from, last_page, per_page, to, total} = useSelector((state: RootState) => state.event);
+  const { loading, getEvents, deleteEvent } = useEvent();
   const [search, setSearch] = useState('');
   const dispatch = useDispatch();
+   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+    const [deleteId, setDeleteId] = useState<any>(0);
+    
+    const closeDeleteDialog = () => setIsDeleteOpen(false);
  
   useEffect(() => {
     if (search === '') {
-      getEvents();
+      getEvents(search, 1);
     }
   }, [search]); 
 
@@ -66,7 +79,7 @@ const ManageEvents = () => {
           />
           <div 
           onClick={async() => {
-           await getEvents(search);
+           await getEvents(search, current_page);
           }}
           className="bg-[#FC6435] h-full flex w-max justify-center items-center cursor-pointer px-[20px] rounded-tr-[8px] rounded-br-[8px]">
             <Image
@@ -193,6 +206,18 @@ const ManageEvents = () => {
                     >
                       Details
                     </button>
+                      <Image
+                            src="/icons/delete.svg"
+                           width={32}
+                          height={32}
+                            alt="Icon"
+                              className="cursor-pointer"
+                              onClick={() => {
+                              setDeleteId(data.id);
+                              setIsDeleteOpen(true);
+                              }}
+                                        
+                               />
                   </div>
                 </TableCell>
               </TableRow>
@@ -200,6 +225,84 @@ const ManageEvents = () => {
           </TableBody>
         </Table>
       </section>
+
+      <section className="flex items-center justify-between">
+  <p className="text-[#606060] text-[14px]">
+    Showing {from} to {to} of {total} results
+  </p>
+  <Pagination className="flex items-center justify-end">
+    <PaginationContent>
+      {/* Previous Button */}
+      <PaginationItem>
+        <PaginationPrevious
+          href="#"
+          onClick={() => current_page > 1 && getEvents(search, current_page - 1)}
+          // disabled={current_page === 1}
+          className={`px-3 py-1 rounded ${
+            current_page === 1
+              ? "cursor-not-allowed bg-gray-200 text-gray-500"
+              : "cursor-pointer hover:bg-gray-100"
+          }`}
+        >
+          Prev
+        </PaginationPrevious>
+      </PaginationItem>
+
+     
+
+       {Array.from({ length: last_page }, (_, index) => index + 1)
+            .filter((page) => {
+              // Show the first three and last three pages, or the current page
+              return (
+                page <= 3 || 
+                page > last_page - 3 || 
+                (page >= current_page - 1 && page <= current_page + 1)
+              );
+            })
+            .map((page, index, filteredPages) => (
+              <React.Fragment key={page}>
+                {/* Add ellipsis if needed */}
+                {index > 0 && page !== filteredPages[index - 1] + 1 && (
+                  <PaginationEllipsis />
+                )}
+                <PaginationItem>
+                  <PaginationLink
+                    href="#"
+                    onClick={() => getEvents(search, page)}
+                    className={`px-3 py-1 rounded ${
+                      page === current_page
+                        ? "border border-[#FC6435] text-[#FC6435] hover:text-[#FC6435] font-bold"
+                        : "border text-[#8F8F8F]"
+                    }`}
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
+              </React.Fragment>
+            ))}
+
+      {/* Next Button */}
+      <PaginationItem>
+        <PaginationNext
+          href="#"
+          onClick={() =>
+            current_page < last_page && getEvents(search, current_page + 1)
+          }
+          // disabled={current_page === last_page}
+          className={`px-3 py-1 rounded ${
+            current_page === last_page
+              ? "cursor-not-allowed bg-gray-200 text-gray-500"
+              : "cursor-pointer hover:bg-gray-100"
+          }`}
+        >
+          Next
+        </PaginationNext>
+      </PaginationItem>
+    </PaginationContent>
+  </Pagination>
+</section>
+
+  
 
       <Dialog open={isOpen} onOpenChange={closeDialog}>
         <DialogContent className="sm:max-w-[500px]  top-[34%]">
@@ -225,6 +328,45 @@ const ManageEvents = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+        <Dialog open={isDeleteOpen} onOpenChange={closeDeleteDialog}>
+              <DialogContent className="sm:max-w-[500px]  top-[34%]">
+                <DialogTitle className="hidden"></DialogTitle>
+                <div className="flex flex-col">
+                  <p className="text-[20px] font-semibold pb-4">
+                    Confirmation Alert!
+                  </p>
+                  <p className="text-[14px]  text-[#808080] py-4 border-t border-b">
+                    Are you sure you want to delete this event?
+                  </p>
+                </div>
+      
+                <DialogFooter>
+                  <div className="space-x-2">
+                    <Button
+                    onClick={() => {
+                      setDeleteId(0);
+                      closeDeleteDialog();
+                    }}
+                    className="shadow-sm font-bold text-white bg-[#FC6435] hover:bg-[#FC6435] transition-all  active:scale-95">
+                      No
+                    </Button>
+                    <Button
+                    onClick={async() => {
+                      closeDeleteDialog();
+                      
+                      await deleteEvent(deleteId);
+      
+                            
+                      await getEvents(search, current_page);
+                    }}
+                    className="shadow-sm font-bold text-[#FC6435] bg-transparent hover:bg-transparent transition-all active:scale-95 border border-[#FC6435]">
+                      Yes
+                    </Button>
+                  </div>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
     </div>
   );
 };

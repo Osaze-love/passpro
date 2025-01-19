@@ -3,8 +3,9 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateSupportTickets } from "@/redux/slices/supportslice";
+import { updateSupportPagination, updateSupportTickets } from "@/redux/slices/supportslice";
 import { toast } from "./use-toast";
+import { resetState } from "@/redux/slices/userslice";
 
 const useSupport = () => {
   const base_url = process.env.NEXT_PUBLIC_BASE_URL;
@@ -14,12 +15,21 @@ const useSupport = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const getSupportTickets = async (status?: string) => {
+  const getSupportTickets = async (status?: string, search?: string, page: number = 1) => {
     setLoading(true);
     try {
-      const endpoint = status
-        ? `${base_url}/support-tickets?status=${status}`
-        : `${base_url}/support-tickets`;
+      const endpoint = `${base_url}/support-tickets${
+        status || search || page
+          ? "?" +
+            [
+              status ? `status=${status}` : null,
+              search ? `query=${search}` : null,
+              page ? `page=${page}` : null,
+            ]
+              .filter(Boolean)
+              .join("&")
+          : ""
+      }`;
 
       const response = await axios.get(endpoint, {
         headers: {
@@ -27,18 +37,26 @@ const useSupport = () => {
         },
       });
       dispatch(updateSupportTickets(response?.data?.data));
-      console.log(response);
+      
+      const pagination = response.data;
+           
+            dispatch(
+             updateSupportPagination({
+               current_page: pagination.current_page,
+               last_page: pagination.last_page,
+               total: pagination.total,
+             })
+           );
     } catch (error: any) {
-      if (error.response?.status === 403) {
-        router.push("/login");
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: error.response?.data?.message || "An unexpected error occurred.",
-        });
-        console.error(error);
-      }
+       if (error.response?.data?.message === "Unauthenticated.") {
+                dispatch(resetState());
+              }else{
+                toast({
+                variant: "destructive",
+                title: "Uh oh! Something went wrong.",
+                description: error.response?.data?.message || 'An unexpected error occurred.', 
+              })
+              }
     } finally {
       setLoading(false);
     }
@@ -58,15 +76,41 @@ const useSupport = () => {
       });
       router.push("/support");
     } catch (error: any) {
-      if (error.response?.status === 403) {
-        router.push("/login");
-      } else {
+      if (error.response?.data?.message === "Unauthenticated.") {
+        dispatch(resetState());
+      }else{
         toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: error.response?.data?.message || "An unexpected error occurred.",
-        });
-        console.error(error);
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: error.response?.data?.message || 'An unexpected error occurred.', 
+      })
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteTicket = async (ticketId: any) => {
+    setLoading(true);
+    try {
+      const response = await axios.delete(`${base_url}/support-tickets/${ticketId}`,  {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      });
+      toast({
+        variant: "default",
+        title: "Successfully Deleted",
+      });
+    } catch (error: any) {
+      if (error.response?.data?.message === "Unauthenticated.") {
+        dispatch(resetState());
+      }else{
+        toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: error.response?.data?.message || 'An unexpected error occurred.', 
+      })
       }
     } finally {
       setLoading(false);
@@ -93,15 +137,14 @@ const useSupport = () => {
       });
       router.push("/support");
     } catch (error: any) {
-      if (error.response?.status === 403) {
-        router.push("/login");
-      } else {
+      if (error.response?.data?.message === "Unauthenticated.") {
+        dispatch(resetState());
+      }else{
         toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: error.response?.data?.message || "An unexpected error occurred.",
-        });
-        console.error(error);
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: error.response?.data?.message || 'An unexpected error occurred.', 
+      })
       }
     } finally {
       setLoading(false);
@@ -112,6 +155,7 @@ const useSupport = () => {
     getSupportTickets,
     replyTicket,
     updateTicketStatus,
+    deleteTicket,
     loading,
   };
 };

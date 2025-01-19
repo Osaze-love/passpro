@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import useWithdraw from "@/hooks/withdraw";
 import BarLoader from "react-spinners/BarLoader";
+import { toast } from "@/hooks/use-toast";
 
 const Details = () => {
   const {activeWithdrawal} = useSelector((state: RootState) => state.withdraw);
@@ -23,6 +24,8 @@ const Details = () => {
   const closeAcceptDialog = () => setisAcceptOpen(false);
   const [isRejectOpen, setisRejectOpen] = useState(false);
   const closeRejectDialog = () => setisRejectOpen(false);
+  const [remark, setRemark] = useState('');
+  const [transactionId, setTransactionId] = useState<any>(0)
 
   return (
     <div className="px-[43px] py-[40px] bg-[#fdf7f4]">
@@ -46,12 +49,20 @@ const Details = () => {
               Withdraw Via Bank
             </p>
             <div className="border rounded-[8px]">
+            <div className="flex items-center justify-between py-[16px] px-[32px] border-b">
+                <p className="text-[14px] text-[#343434] font-semibold">
+                  Id
+                </p>
+                <p className="text-[14px] text-[#343434] font-bold">
+                {activeWithdrawal?.id} 
+                </p>
+              </div>
               <div className="flex items-center justify-between py-[16px] px-[32px] border-b">
                 <p className="text-[14px] text-[#343434] font-semibold">
                   Date
                 </p>
                 <p className="text-[14px] text-[#343434] font-bold">
-                {activeWithdrawal?.initiated_at}
+                {activeWithdrawal?.initiated_at?.split("T")[0]} {activeWithdrawal?.initiated_at?.split("T")[1]?.slice(0, 8)}
                 </p>
               </div>
               <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
@@ -119,15 +130,28 @@ const Details = () => {
             <p className="text-[20px] font-semibold text-[#606060] pb-[12px] border-b border-b-[#8F8F8F]">
               User Withdraw Information
             </p>
-            <div className="py-[16px] border-b border-b-[#8F8F8F]">
-              <p className="text-[#606060] font-semibold">Account Number</p>
-              <p className="text-[14px] text-[#606060]">{activeWithdrawal?.user?.account_number}</p>
+            <div className="py-[16px] border-b border-b-[#8F8F8F] space-y-[20px]">
+              <div><p className="text-[#606060] font-semibold">Account Number</p>
+              <p className="text-[14px] text-[#606060]">{activeWithdrawal?.user?.account_number}</p></div>
+               
+               <div>
+               <p className="text-[#606060] font-semibold">Account Name</p>
+               <p className="text-[14px] text-[#606060]">{activeWithdrawal?.account_name}</p>
+               </div>
+
+               <div>
+               <p className="text-[#606060] font-semibold">Bank</p>
+               <p className="text-[14px] text-[#606060]">{activeWithdrawal?.bank_name}</p>
+               </div>
+             
+
+
               {activeWithdrawal?.status === 'pending' &&
                <div className="flex mt-[24px] items-center space-x-4">
                <button
                  className="bg-none border border-[#4AC971] rounded-[8px]  text-[#4AC971] flex items-center p-[10px] space-x-[8px] transition-all active:scale-95"
                  onClick={() => {
-                  approveWithdrawal(activeWithdrawal?.id);
+                  approveWithdrawal(activeWithdrawal?.id, activeWithdrawal?.transaction_reference);
                  }}
 
                >
@@ -141,9 +165,10 @@ const Details = () => {
                </button>
                <button
                  className="bg-none border border-[#EB2222] rounded-[8px] p-[10px] text-[#EB2222] flex items-center space-x-[8px] transition-all active:scale-95"
-                 onClick={() => 
-                  rejectWithdrawal(activeWithdrawal?.id)
-                 }
+                 onClick={() => {
+                  setTransactionId(activeWithdrawal?.id);
+                  setisRejectOpen(true);
+                 }}
                >
                  <Image
                    src="/icons/rejectIcon.svg"
@@ -207,6 +232,10 @@ const Details = () => {
                 </div>
               </Label>
               <Textarea
+              value={remark}
+              onChange={(e) => {
+                setRemark(e.target.value);
+              }}
                 className="focus-visible:ring-0 focus-visible:ring-transparent h-[101px] shadow-sm"
                 placeholder=""
               />
@@ -214,7 +243,19 @@ const Details = () => {
           </div>
 
           <DialogFooter>
-            <Button className="shadow-sm w-full font-bold text-[white] bg-[#FC6435] hover:bg-[#FC6435] transition-all active:scale-95">
+            <Button
+            onClick={() => {
+              if(remark) {
+                closeRejectDialog();
+                rejectWithdrawal(transactionId, remark)
+              } else {
+                toast({
+                  variant: "destructive",
+                  title: "Kindly enter a reason for rejection",
+                });
+              }
+            }}
+            className="shadow-sm w-full font-bold text-[white] bg-[#FC6435] hover:bg-[#FC6435] transition-all active:scale-95">
               Submit
             </Button>
           </DialogFooter>

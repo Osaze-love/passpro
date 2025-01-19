@@ -62,7 +62,6 @@ const page = () => {
     }
   
     // Send `formData` to the hook
-    console.log('FormData ready to send:', formData);
     await replyTicket(activeTicket?.id, formData);
   };
   
@@ -95,6 +94,7 @@ const page = () => {
                          </p> : <p className=" text-[#606060] w-[64px] flex items-center justify-center rounded-[20px] bg-[#E5E5E5] border border-[#343434] p-[5px]">
                            {activeTicket?.status}
                          </p>  }
+                         <p className="text-[#343434] font-bold">TicketId [{activeTicket?.id}]</p>
             <p className="text-[#343434] font-bold">{activeTicket?.subject}</p>
           </div>
           {activeTicket?.status === 'Open' ? <button

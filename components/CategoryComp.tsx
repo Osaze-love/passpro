@@ -24,23 +24,41 @@ import useCategory from "@/hooks/category";
 import BarLoader from "react-spinners/BarLoader";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 
 const CategoryComp = () => {
-  const { getCategories, loading, toggleCategoryStatus, createCategory, updateCategory } = useCategory();
-  const {categories} = useSelector((state: RootState) => state.category);
+  const { getCategories, loading, toggleCategoryStatus, createCategory, updateCategory, deleteCategory } = useCategory();
+  const {categories, current_page, from, last_page, per_page, to, total} = useSelector((state: RootState) => state.category);
   const [isOpen, setisOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isCategoryOpen, setisCategoryOpen] = useState(false);
   const [isUpdateCategoryOpen, setisUpdateCategoryOpen] = useState(false);
   // const [file, setFile] = useState<any>(null);
+  const [search, setSearch] = useState('');
   const [imageSrc, setImageSrc] = useState<any>(null);
   const [formData, setFormData] = useState<FormData | null>(null);
+  const [editImageSrc, setEditImageSrc] = useState<any>(null);
+  const [editFormData, setEditFormData] = useState<FormData | null>(null);
   const [categoryId, setCategoryId] = useState<any>(0);
   const [categoryName, setCategoryName] = useState<string>('');
   const [activeCategory, setActiveCategory] = useState<any>('');
+  const [deleteId, setDeleteId] = useState<any>(0);
   const closeUpdateCategory = () => {
-    setisUpdateCategoryOpen(false)
-  }
+    setisUpdateCategoryOpen(false);
+    setCategoryName("");
+    setEditImageSrc(null);
+    setEditFormData(null);
+    }
   const closeDialog = () => setisOpen(false);
+  const closeDeleteDialog = () => setIsDeleteOpen(false);
   const closeCategoryDialog = () => {
      setisCategoryOpen(false);
     setCategoryName("");
@@ -48,76 +66,35 @@ const CategoryComp = () => {
     setImageSrc(null);
   };
   useEffect(() => {
-    getCategories();
+      getCategories(1);
   },[])
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
-
+  
     if (!selectedFile) return;
-
+  
+    // Validate file format
     const validFormats = ["image/jpeg", "image/png", "image/jpg"];
     if (!validFormats.includes(selectedFile.type)) {
       alert("Unsupported file format. Please upload a PNG, JPEG, or JPG image.");
       return;
     }
-
+  
     try {
-      // Resize the image to 200x200
-      const resizedBlob = await resizeImage(selectedFile, 200, 200);
-
+      // Create FormData with the original file
       const newFormData = new FormData();
-      newFormData.append("image", resizedBlob, selectedFile.name);
-
-      const imageUrl = URL.createObjectURL(resizedBlob);
-
+      newFormData.append("image", selectedFile);
+  
+      // Generate a URL to display the image
+      const imageUrl = URL.createObjectURL(selectedFile);
+  
       setImageSrc(imageUrl);
       setFormData(newFormData);
-      console.log(newFormData);
-      
-
-      console.log("FormData content:", newFormData.get("image"));
+  
     } catch (error) {
-      console.error("Error resizing the image:", error);
     }
   };
-
-  // Function to resize the image
-  const resizeImage = (file: File, width: number, height: number): Promise<Blob> => {
-    return new Promise((resolve, reject) => {
-      const img = document.createElement("img") as HTMLImageElement;
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        img.src = e.target?.result as string;
-      };
-
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-
-        const ctx = canvas.getContext("2d");
-        if (ctx) {
-          ctx.drawImage(img, 0, 0, width, height);
-          canvas.toBlob(
-            (blob) => {
-              if (blob) resolve(blob);
-              else reject(new Error("Failed to create resized blob."));
-            },
-            file.type,
-            1
-          );
-        } else {
-          reject(new Error("Canvas context not available."));
-        }
-      };
-
-      reader.onerror = (error) => reject(error);
-      reader.readAsDataURL(file);
-    });
-  };
-
   const handleCreateCategory = async () => {
     if (!categoryName || !formData) {
       alert("Please provide a category name and upload an image.");
@@ -125,7 +102,6 @@ const CategoryComp = () => {
     }
     formData.append("category_name", categoryName);
   
-    // Call your createCategory function with the FormData
     setisCategoryOpen(false);
     await createCategory(formData);
   
@@ -134,38 +110,74 @@ const CategoryComp = () => {
     setImageSrc(null);
   };
 
-  const handleEditCategory = (data: any) => {
-    setActiveCategory(data);
-
-  if (formData) {
-    formData.append("image", `https://sub.passpro.africa/storage/${data.image}`);
-  } else {
+  const handleEditFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+  
+    if (!selectedFile) return;
+  
+    const validFormats = ["image/jpeg", "image/png", "image/jpg"];
+    if (!validFormats.includes(selectedFile.type)) {
+      alert("Unsupported file format. Please upload a PNG, JPEG, or JPG image.");
+      return;
+    }
+  
+    // Update image preview and FormData
     const newFormData = new FormData();
-    newFormData.append("image", `https://sub.passpro.africa/storage/${data.image}`);
-    setFormData(newFormData); 
-  }
-    setCategoryName(data.category_name);
-    setImageSrc(data.image); 
-    setisUpdateCategoryOpen(true);
+    newFormData.append("image", selectedFile);
+  
+    const imageUrl = URL.createObjectURL(selectedFile);
+    setEditImageSrc(imageUrl); // Preview the newly selected image
+    setEditFormData(newFormData); // Save the new file in FormData
   };
-
+  
+  const handleEditCategory = (data: any) => {
+    setActiveCategory(data); // Set active category
+    setCategoryName(data.category_name); // Set category name
+  
+    // Construct the full image URL for preview purposes
+    const imageUrl = `https://sub.passpro.africa/storage/${data.image}`;
+    setEditImageSrc(imageUrl);
+  
+    // Create a File object manually using the existing image URL
+    const newFormData = new FormData();
+    const imageName = data.image.split("/").pop() || "image.jpg";
+  
+    try {
+      // Manually create a File object for FormData
+      const file = new File([], imageName, { type: "image/jpeg" }); // Replace with the correct MIME type if necessary
+      newFormData.append("image", file);
+  
+      setEditFormData(newFormData);
+      setisUpdateCategoryOpen(true); // Open the dialog
+    } catch (error) {
+      alert("An error occurred while preparing the image. Please try again.");
+    }
+  };
+  
+  
+  
+  // Handle update category (submit updated data)
   const handleUpdateCategory = async () => {
-    if (!categoryName || !formData) {
+
+    if (!categoryName || !editFormData) {
       alert("Please provide a category name and upload an image.");
       return;
     }
- 
-    formData.append("category_name", categoryName);
-    // console.log("FormData content:", formData.get("image"));
-    // console.log("FormData content:", formData.get("category_name"));
+    
+    // Append category name to FormData
+    editFormData.append("category_name", categoryName);
+    
+    try {
+      setisUpdateCategoryOpen(false);
 
-
-    await updateCategory(activeCategory.id, formData);
-
-    setisUpdateCategoryOpen(false);
-    setCategoryName('');
-    setImageSrc(null);
-    setFormData(null);
+      await updateCategory(activeCategory.id, editFormData);
+  
+      // Reset states after successful update
+      setCategoryName("");
+      setEditImageSrc(null);
+      setEditFormData(null);
+    } catch (error) {
+    }
   };
   
 
@@ -215,19 +227,27 @@ const CategoryComp = () => {
                 </TableCell>
                 <TableCell className="text-[#606060]">{data?.events_count}</TableCell>
                 <TableCell>
-                  <p className="w-max text-[#28C76F] rounded-[20px] bg-[#E9F9F0] p-[8px]">
-                    {data?.status}
-                  </p>
+                {data?.status === 'disabled' ? 
+                <p className="w-max text-[#FF3B30] rounded-[20px] bg-[#f1e6e6] p-[8px]">
+                {data?.status}
+              </p>
+              :
+                <p className="w-max text-[#28C76F] rounded-[20px] bg-[#E9F9F0] p-[8px]">
+                {data?.status}
+              </p> }
+                  
                 </TableCell>
-                <TableCell className="text-right border-r w-[200px]">
+                <TableCell className="text-right border-r w-[230px]">
                   <div className="flex items-center justify-end space-x-2">
-                    <button className="bg-none border border-[#FC6435] rounded-[8px]  text-[#FC6435] flex items-center p-[10px] space-x-[8px] transition-all active:scale-95">
+                    <button
+                    onClick={() => handleEditCategory(data)}
+                    className="bg-none border border-[#FC6435] rounded-[8px]  text-[#FC6435] flex items-center p-[10px] space-x-[8px] transition-all active:scale-95">
                       <Image
                         src="/icons/editred.svg"
                         width={12}
                         height={12}
                         alt="editIcon"
-                        onClick={() => handleEditCategory(data)}
+                        
 
                       />
                       <span className="text-[14px]">Edit</span>
@@ -250,12 +270,96 @@ const CategoryComp = () => {
                       <span className="text-[14px]">Disable</span>
                       }
                     </button>
+
+                    <Image
+                        src="/icons/delete.svg"
+                        width={32}
+                        height={32}
+                        alt="Icon"
+                        className="cursor-pointer"
+                        onClick={() => {
+                         setDeleteId(data.id);
+                         setIsDeleteOpen(true);
+                        }}
+
+                      />
                   </div>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
+      </section>
+
+       <section className="flex items-center justify-between">
+        <p className="text-[#606060] text-[14px]">
+          Showing {from} to {to} of {total} results
+        </p>
+        <Pagination className="flex items-center justify-end">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                href="#"
+                onClick={() => current_page > 1 && getCategories(current_page - 1)}
+                className={`px-3 py-1 rounded ${
+                  current_page === 1
+                    ? "cursor-not-allowed bg-gray-200 text-gray-500"
+                    : "cursor-pointer hover:bg-gray-100"
+                }`}
+              >
+                Prev
+              </PaginationPrevious>
+            </PaginationItem>
+      
+
+             {Array.from({ length: last_page }, (_, index) => index + 1)
+                  .filter((page) => {
+                    // Show the first three and last three pages, or the current page
+                    return (
+                      page <= 3 || 
+                      page > last_page - 3 || 
+                      (page >= current_page - 1 && page <= current_page + 1)
+                    );
+                  })
+                  .map((page, index, filteredPages) => (
+                    <React.Fragment key={page}>
+                      {/* Add ellipsis if needed */}
+                      {index > 0 && page !== filteredPages[index - 1] + 1 && (
+                        <PaginationEllipsis />
+                      )}
+                      <PaginationItem>
+                        <PaginationLink
+                          href="#"
+                          onClick={() => getCategories(page)}
+                          className={`px-3 py-1 rounded ${
+                            page === current_page
+                              ? "border border-[#FC6435] text-[#FC6435] hover:text-[#FC6435] font-bold"
+                              : "border text-[#8F8F8F]"
+                          }`}
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    </React.Fragment>
+                  ))}
+      
+            <PaginationItem>
+              <PaginationNext
+                href="#"
+                onClick={() =>
+                  current_page < last_page && getCategories(current_page + 1)
+                }
+                className={`px-3 py-1 rounded ${
+                  current_page === last_page
+                    ? "cursor-not-allowed bg-gray-200 text-gray-500"
+                    : "cursor-pointer hover:bg-gray-100"
+                }`}
+              >
+                Next
+              </PaginationNext>
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </section>
 
       <Dialog open={isOpen} onOpenChange={closeDialog}>
@@ -284,6 +388,41 @@ const CategoryComp = () => {
               onClick={async() => {
                 closeDialog();
                 await toggleCategoryStatus(categoryId);
+              }}
+              className="shadow-sm font-bold text-[#FC6435] bg-transparent hover:bg-transparent transition-all active:scale-95 border border-[#FC6435]">
+                Yes
+              </Button>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isDeleteOpen} onOpenChange={closeDeleteDialog}>
+        <DialogContent className="sm:max-w-[500px]  top-[34%]">
+          <DialogTitle className="hidden"></DialogTitle>
+          <div className="flex flex-col">
+            <p className="text-[20px] font-semibold pb-4">
+              Confirmation Alert!
+            </p>
+            <p className="text-[14px]  text-[#808080] py-4 border-t border-b">
+              Are you sure you want to delete this category?
+            </p>
+          </div>
+
+          <DialogFooter>
+            <div className="space-x-2">
+              <Button
+              onClick={() => {
+                setDeleteId(0);
+                closeDeleteDialog();
+              }}
+              className="shadow-sm font-bold text-white bg-[#FC6435] hover:bg-[#FC6435] transition-all  active:scale-95">
+                No
+              </Button>
+              <Button
+              onClick={async() => {
+                closeDeleteDialog();
+                await deleteCategory(deleteId);
               }}
               className="shadow-sm font-bold text-[#FC6435] bg-transparent hover:bg-transparent transition-all active:scale-95 border border-[#FC6435]">
                 Yes
@@ -341,8 +480,7 @@ const CategoryComp = () => {
               </div>
               <p className="text-[#606060] text-[14px]">
                 Supported Files:{" "}
-                <span className="font-bold">.png, .jpg, .jpeg.</span> Image will
-                be resized into <span className="font-bold">200x200px</span>
+                <span className="font-bold">.png, .jpg, .jpeg.</span> 
               </p>
             </div>
 
@@ -389,32 +527,36 @@ const CategoryComp = () => {
                 </div>
               </Label>
               <div className="h-[345px] w-full border-2 shadow-sm relative rounded-[8px]">
-              {imageSrc && <Image src={`https://sub.passpro.africa/storage/${imageSrc}`} alt="Category Image" width={200} height={200} />}
+  {editImageSrc && (
+    <img
+    src={editImageSrc}
+    alt="Uploaded Preview"
+    className="object-cover w-full h-full rounded-[8px]"
+  />
+  )}
 
-              
-                <label
-                  htmlFor="file-upload"
-                  className="absolute -right-2 -bottom-2 cursor-pointer"
-                >
-                  <Image
-                    src={"/icons/Upload.svg"}
-                    height={40}
-                    width={40}
-                    alt="uploadIcon"
-                  />
-                  <input
-                    id="file-upload"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleFileChange}
-                  />
-                </label>
-              </div>
+  <label
+    htmlFor="file-upload"
+    className="absolute -right-2 -bottom-2 cursor-pointer"
+  >
+    <Image
+      src="/icons/Upload.svg"
+      height={40}
+      width={40}
+      alt="uploadIcon"
+    />
+    <input
+      id="file-upload"
+      type="file"
+      accept="image/*"
+      className="hidden"
+      onChange={handleEditFileChange}
+    />
+  </label>
+</div>
               <p className="text-[#606060] text-[14px]">
                 Supported Files:{" "}
-                <span className="font-bold">.png, .jpg, .jpeg.</span> Image will
-                be resized into <span className="font-bold">200x200px</span>
+                <span className="font-bold">.png, .jpg, .jpeg.</span> 
               </p>
             </div>
 

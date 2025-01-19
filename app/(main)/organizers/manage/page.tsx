@@ -23,18 +23,37 @@ import useOrganizer from "@/hooks/organizer";
 import BarLoader from "react-spinners/BarLoader";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 
 const ManageOrganizer = () => {
   const router = useRouter();
-  const { getOrganizer, loading, toggleFeature, toggleRestriction, getOneOrganizer } = useOrganizer();
-  const {organizers
-
+  const { getOrganizer, loading, toggleFeature, toggleRestriction, getOneOrganizer, oneLoading, getOneWithdrawalCount } = useOrganizer();
+  const {organizers, current_page, from, last_page, per_page, to, total
   } = useSelector((state: RootState) => state.organizer);
+    const [search, setSearch] = useState('');
+  
 
   const [activeTab, setActiveTab] = useState("All");
   useEffect(() => {
-    getOrganizer();
-   },[]);
+    if (search === '') {
+      const filter =
+                activeTab === "All"
+                  ? undefined
+                  : activeTab === "Active"
+                  ? "active"
+                  : "banned";
+      getOrganizer(filter,search, 1);
+    }
+   },[search]);
+
   const [isConfirmOpen, setisConfirmOpen] = useState(false);
   const [organizerId, setOrganizerId] = useState(0);
   const closeConfirmDialog = () => setisConfirmOpen(false);
@@ -57,11 +76,11 @@ const ManageOrganizer = () => {
               // : activeTab === "Phone Verified"
               // ? "phone_verified"
               // : 'kyc_verified'
-            getOrganizer(filter);
+            getOrganizer(filter, search, 1);
           }, [activeTab]);
   return (
     <div className="px-[43px] py-[40px] bg-[#fdf7f4]">
-       {loading && (
+       {(loading || oneLoading) && (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-85">
      
         <BarLoader color="#FC6435" />
@@ -73,9 +92,23 @@ const ManageOrganizer = () => {
         <div className="flex w-[277px] h-[48px] items-center border rounded-[8px]  mx-[33px] bg-white">
           <Input
             placeholder="Name I Organizer"
-            className=" focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 border-0 grow text-black placeholder:text-[#D9D9D9] bg-transparent placeholder:text-[12px] "
+            onChange={(e) => {
+              setSearch(e.target.value)
+             }}
+            className="shadow-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 border-0 grow text-black placeholder:text-[#D9D9D9] bg-transparent placeholder:text-[12px] "
           />
-          <div className="bg-[#FC6435] h-full flex w-max justify-center items-center cursor-pointer px-[20px] rounded-tr-[8px] rounded-br-[8px]">
+          <div 
+           onClick={async() => {
+            const filter =
+                activeTab === "All"
+                  ? undefined
+                  : activeTab === "Active"
+                  ? "active"
+                  : "banned";
+          
+              getOrganizer(filter, search, current_page);
+           }}
+          className="bg-[#FC6435] h-full flex w-max justify-center items-center cursor-pointer px-[20px] rounded-tr-[8px] rounded-br-[8px]">
             <Image
               src={"/icons/searchIconwhite.svg"}
               width={20}
@@ -193,7 +226,8 @@ const ManageOrganizer = () => {
                  <button
                       className="bg-none border border-[#FC6435] rounded-[8px] p-[10px] text-[#FC6435] flex items-center space-x-[8px] transition-all active:scale-95"
                       onClick={async() => {
-                        await getOneOrganizer(data.id)
+                        await getOneOrganizer(data?.id)
+                        await getOneWithdrawalCount(data?.id)
                         router.push("/organizers/details");
                       }}
                     >
@@ -266,6 +300,112 @@ const ManageOrganizer = () => {
         </Table>
       </section>
 
+      <section className="flex items-center justify-between">
+  <p className="text-[#606060] text-[14px]">
+    Showing {from} to {to} of {total} results
+  </p>
+  <Pagination className="flex items-center justify-end">
+    <PaginationContent>
+      {/* Previous Button */}
+      <PaginationItem>
+        <PaginationPrevious
+          href="#"
+          onClick={() => {
+            if (current_page > 1) {
+              const filter =
+                activeTab === "All"
+                  ? undefined
+                  : activeTab === "Active"
+                  ? "active"
+                  : "banned";
+          
+              getOrganizer(filter, search, current_page - 1);
+            }
+          }}
+          // disabled={current_page === 1}
+          className={`px-3 py-1 rounded ${
+            current_page === 1
+              ? "cursor-not-allowed bg-gray-200 text-gray-500"
+              : "cursor-pointer hover:bg-gray-100"
+          }`}
+        >
+          Prev
+        </PaginationPrevious>
+      </PaginationItem>
+
+      {/* Page Numbers */}
+    
+
+       {Array.from({ length: last_page }, (_, index) => index + 1)
+            .filter((page) => {
+              // Show the first three and last three pages, or the current page
+              return (
+                page <= 3 || 
+                page > last_page - 3 || 
+                (page >= current_page - 1 && page <= current_page + 1)
+              );
+            })
+            .map((page, index, filteredPages) => (
+              <React.Fragment key={page}>
+                {/* Add ellipsis if needed */}
+                {index > 0 && page !== filteredPages[index - 1] + 1 && (
+                  <PaginationEllipsis />
+                )}
+                <PaginationItem>
+                  <PaginationLink
+                    href="#"
+                    onClick={() => {
+                      const filter =
+                        activeTab === "All"
+                          ? undefined
+                          : activeTab === "Active"
+                          ? "active"
+                          : "banned";
+                  
+                      getOrganizer(filter, search, page);
+                      }}
+                    className={`px-3 py-1 rounded ${
+                      page === current_page
+                        ? "border border-[#FC6435] text-[#FC6435] hover:text-[#FC6435] font-bold"
+                        : "border text-[#8F8F8F]"
+                    }`}
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
+              </React.Fragment>
+            ))}
+
+      {/* Next Button */}
+      <PaginationItem>
+        <PaginationNext
+          href="#"
+          onClick={() => {
+            if (current_page < last_page) {
+              const filter =
+                activeTab === "All"
+                  ? undefined
+                  : activeTab === "Active"
+                  ? "active"
+                  : "banned";
+          
+              getOrganizer(filter, search, current_page + 1);
+            }
+          }}
+          // disabled={current_page === last_page}
+          className={`px-3 py-1 rounded ${
+            current_page === last_page
+              ? "cursor-not-allowed bg-gray-200 text-gray-500"
+              : "cursor-pointer hover:bg-gray-100"
+          }`}
+        >
+          Next
+        </PaginationNext>
+      </PaginationItem>
+    </PaginationContent>
+  </Pagination>
+</section>
+
       <Dialog open={isConfirmOpen} onOpenChange={closeConfirmDialog}>
         <DialogContent className="sm:max-w-[500px]  top-[34%]">
           <DialogTitle className="hidden"></DialogTitle>
@@ -287,7 +427,7 @@ const ManageOrganizer = () => {
             </div>
 
             <p className="text-[18px]  text-[#49454F] py-4 text-center">
-              Are you sure you want to feature this organizer?
+              Are you sure you want to update this organizer detail?
             </p>
           </div>
 

@@ -185,7 +185,6 @@ const AddEvents = () => {
       return { ...prev, tickets };
     });
    
-    console.log(event);
     
     // Reset dialog state
     handleCancel();
@@ -269,7 +268,7 @@ const AddEvents = () => {
   return (
 
     <div className="px-[43px] py-[40px] bg-[#fdf7f4] space-y-[30px]">
-     {loading || addLoading && (
+     {(loading || addLoading) && (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-85">
      
         <BarLoader color="#FC6435" />
@@ -777,7 +776,7 @@ const AddEvents = () => {
     
                   <div className="col-span-1 space-y-[5px]">
                     <p>₦{ticket?.ticket_price}</p>
-                    <p className="text-[#FC6435]">{ticket?.ticket_purchase_limit} unit(s) available</p>
+                    <p className="text-[#FC6435]">{ticket?.ticket_quantity} unit(s) available</p>
                   </div>
                  
                 </div>
