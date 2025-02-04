@@ -37,7 +37,7 @@ const Navbar = () => {
     }
   };
 
-  useClickOutside(dropdownRef, () => setShowDropdown(false)); // Close dropdown on outside click.
+  // useClickOutside(dropdownRef, () => setShowDropdown(false)); // Close dropdown on outside click.
 
   return (
     <div className="sticky bg-[#FC6435] top-0 flex items-center justify-between border-b z-30">
@@ -65,7 +65,7 @@ const Navbar = () => {
           />
         </div>
 
-        {showDropdown && (
+        {/* {showDropdown && (
           <div
             ref={dropdownRef}
             className="absolute z-10 bg-white shadow-md w-full max-h-[300px] overflow-y-auto mt-2 rounded p-4"
@@ -216,7 +216,7 @@ const Navbar = () => {
         </div>
       )}
           </div>
-        )}
+        )} */}
         
       </div>
 
