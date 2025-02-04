@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState = {
   orders: [] as any[], 
+  activeOrder: {} as any,
   current_page: 1,
   from : 0,
 last_page: 0,
@@ -27,13 +28,16 @@ export const orderslice = createSlice({
         state.to = action.payload.to;
         state.total = action.payload.total
       },
-   
+      updateActiveOrder: (state, action: PayloadAction<any>) => {
+        state.activeOrder = action.payload;
+      },
   },
 });
 
 // Export the actions
 export const {
  updateOrders,
+ updateActiveOrder,
  updateOrderPagination
 } = orderslice.actions;
 

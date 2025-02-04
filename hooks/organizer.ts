@@ -3,7 +3,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateActiveOrganizer, updateOrganizerCount, updateOrganizerPagination, updateOrganizers } from "@/redux/slices/organizerslice";
+import { updateActiveOrganizer, updateOrganizerCount, updateOrganizerEmails, updateOrganizerPagination, updateOrganizers } from "@/redux/slices/organizerslice";
 import { resetState } from "@/redux/slices/userslice";
 import { toast } from "./use-toast";
 
@@ -371,6 +371,93 @@ const useOrganizer = () => {
     }
   };
 
+  const getAllOrganizers = async () => {
+    setLoading(true);
+    try {
+
+      const response = await axios.get(`${base_url}/get-organizers`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      });
+      
+      const organizerEmails = response.data.map((item: any) => item.email);
+  
+      dispatch(updateOrganizerEmails(organizerEmails));
+    
+
+    } catch (error: any) {
+      if (error.response?.data?.message === "Unauthenticated.") {
+        dispatch(resetState());
+      }else{
+        toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: error.response?.data?.message || 'An unexpected error occurred.', 
+      })
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const sendNotification = async ({
+    subject,
+    recipientGroup,
+    selected_emails,
+    message,
+  }: {
+    subject: any;
+    recipientGroup:any;
+    selected_emails?: any;
+    message: any;
+  }) => {
+    setLoading(true);
+    try {
+      const payload: any = {
+        subject,
+        recipients: recipientGroup,
+        message,
+      };
+  
+      if (recipientGroup === "selected" && selected_emails) {
+        payload.selected_emails = selected_emails;
+      }
+  
+      const response = await axios.post(
+        `${base_url}/notification-mail`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        }
+      );
+      
+  
+      toast({
+        variant: "default",
+        description: "Notification sent successfully.",
+      });
+    } catch (error: any) {
+      if (error.response?.data?.message === "Unauthenticated.") {
+        dispatch(resetState());
+      } else {
+        
+        toast({
+          variant: "destructive",
+          title: "Error sending notification.",
+          description:
+            error.response?.data?.message || "An unexpected error occurred.",
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  
+
   return {
     addOrganizer,
     getOrganizer,
@@ -382,7 +469,9 @@ const useOrganizer = () => {
     oneLoading,
     addBalance, 
     subtractBalance,
-    getOneWithdrawalCount
+    getOneWithdrawalCount,
+    getAllOrganizers,
+    sendNotification
   };
 };
 

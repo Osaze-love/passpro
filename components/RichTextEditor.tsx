@@ -19,8 +19,8 @@ import {
   Text,
 } from "lucide-react";
 
-const RichTextEditor = () => {
-  const [editorContent, setEditorContent] = useState("");
+const RichTextEditor = ({ setEditorContent, editorContent }: { setEditorContent: (content: string) => void; editorContent: string }) => {
+
 
   const editor = useEditor({
     extensions: [
@@ -31,7 +31,7 @@ const RichTextEditor = () => {
       Link.configure({ openOnClick: false }),
      
     ],
-    content: "<p>Text Goes Here</p>",
+    content: editorContent || "<p>Enter Text</p>",
     onUpdate: ({ editor }) => {
       setEditorContent(editor.getHTML());
     },
@@ -43,17 +43,7 @@ const RichTextEditor = () => {
     };
   }, [editor]);
 
-  const setLink = () => {
-    const previousUrl = editor?.getAttributes("link").href;
-    const url = window.prompt("Enter the link:", previousUrl);
-    if (url === null) return;
-
-    if (url === "") {
-      editor?.chain().focus().unsetLink().run();
-    } else {
-      editor?.chain().focus().setLink({ href: url }).run();
-    }
-  };
+  
 
   return (
     <div className="border p-4 rounded-lg">
@@ -108,27 +98,23 @@ const RichTextEditor = () => {
 
         {/* Bullet List */}
         <button
-          onClick={() => editor?.chain().focus().toggleBulletList().run()}
-          className={`p-2 rounded ${editor?.isActive("bulletList") ? "bg-gray-200" : ""}`}
-        >
-          <List className="w-5 h-5" />
-        </button>
+  onClick={() => editor?.chain().focus().toggleList("bulletList", "listItem").run()}
+  className={`p-2 rounded ${editor?.isActive("bulletList") ? "bg-gray-200" : ""}`}
+>
+  <List className="w-5 h-5" />
+</button>
 
-        {/* Ordered List */}
-        <button
-          onClick={() => editor?.chain().focus().toggleOrderedList().run()}
-          className={`p-2 rounded ${editor?.isActive("orderedList") ? "bg-gray-200" : ""}`}
-        >
-          <ListOrdered className="w-5 h-5" />
-        </button>
+<button
+  onClick={() => editor?.chain().focus().toggleList("orderedList", "listItem").run()}
+  className={`p-2 rounded ${editor?.isActive("orderedList") ? "bg-gray-200" : ""}`}
+>
+  <ListOrdered className="w-5 h-5" />
+</button>
 
-        {/* Link */}
-        <button onClick={setLink} className="p-2 rounded">
-          <LinkIcon className="w-5 h-5" />
-        </button>
 
-        {/* Font Size */}
-        <div className="flex items-center gap-2">
+      
+
+        {/* <div className="flex items-center gap-2">
           <Text className="w-5 h-5" />
           <select
             className="p-1 border rounded"
@@ -138,12 +124,13 @@ const RichTextEditor = () => {
             <option value="16px">16px</option>
             <option value="20px">20px</option>
           </select>
-        </div>
+        </div> */}
       </div>
 
       <EditorContent
   editor={editor}
-  className="rounded p-4 min-h-[200px] focus:outline-none focus-visible:border-transparent"
+  value={editorContent}
+  className="rounded p-4 min-h-[200px] "
 />
 
 

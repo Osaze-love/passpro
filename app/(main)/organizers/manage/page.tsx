@@ -140,77 +140,70 @@ const ManageOrganizer = () => {
           </Button>
         ))}
       </section>
-      <section className="mt-[40px]">
-        <Table className="border-b">
-          <TableCaption></TableCaption>
-          <TableHeader>
-            <TableRow className="bg-[#FC6435] hover:bg-[#FC6435] ">
-              <TableHead className=" text-white text-center font-extrabold rounded-tl-[8px]">
-                Organizer
-              </TableHead>
-              <TableHead className="text-white text-center font-extrabold">
-                Organization Name
-              </TableHead>
-              <TableHead className="text-white text-center font-extrabold">
-                Contact Info
-              </TableHead>
-              <TableHead className="text-white text-center font-extrabold">
-                Country
-              </TableHead>
-              <TableHead className="text-white text-center font-extrabold">
-                Featured
-              </TableHead>
-              <TableHead className="text-white text-center font-extrabold">
-                Date Joined
-              </TableHead>
-             
-              <TableHead className="text-center font-extrabold text-white rounded-tr-[8px]">
-                Action
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {organizers?.map((data, index) => (
-              <TableRow key={index}>
-                <TableCell className="font-bold text-center h-[75px] text-[#606060] border-l">
-                  {data?.first_name}
-                  <p className="text-[14px] text-[#FC6435]">
-                    @{data.username}
-                  </p>{" "}
-                </TableCell>
-                <TableCell className="font-medium h-[75px] text-center text-[#606060] ">
-                  {data?.organization_name}
-
-                  <p className="text-[14px] text-[#FC6435]">{data?.events?.length} Event(s)</p>
-                </TableCell>
-                <TableCell className="font-medium h-[75px] text-center text-[#606060] ">
-                  {data?.email}
-
-                  <p className="text-[14px] ">
-                  {data?.phone_number}
-                  </p>
-                </TableCell>
-                <TableCell className="text-[#606060] font-bold text-center">
-                  {data?.country}
-                </TableCell>
-                <TableCell className="text-center">
-                {data?.feature === 0 ? 
-                 <p className=" text-[#FF3B30] w-[64px] flex items-center justify-center rounded-[20px] bg-[#f5e2e2] border border-[#FF3B30] p-[5px]">
-                    No
-                 </p>
-                : 
-                <p className=" text-[#34C759] w-[64px] flex items-center justify-center rounded-[20px] bg-[#dcede1] border border-[#34C759] p-[5px]">
-                    Yes
+      <section className="mt-[40px] max-w-[58rem] mx-auto">
+  <div className="overflow-x-auto scrollbar-hide">
+    <Table className="border-b max-w-full">
+      <TableCaption></TableCaption>
+      <TableHeader>
+        <TableRow className="bg-[#FC6435] hover:bg-[#FC6435]">
+          <TableHead className="text-white text-center font-extrabold rounded-tl-[8px]">
+            Organizer
+          </TableHead>
+          <TableHead className="text-white text-center font-extrabold">
+            Organization Name
+          </TableHead>
+          <TableHead className="text-white text-center font-extrabold">
+            Contact Info
+          </TableHead>
+          <TableHead className="text-white text-center font-extrabold">
+            Country
+          </TableHead>
+          <TableHead className="text-white text-center font-extrabold">
+            Featured
+          </TableHead>
+          <TableHead className="text-white text-center font-extrabold">
+            Date Joined
+          </TableHead>
+          <TableHead className="text-center font-extrabold text-white rounded-tr-[8px]">
+            Action
+          </TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {organizers?.map((data, index) => (
+          <TableRow key={index}>
+            <TableCell className="font-bold text-center h-[75px] text-[#606060] border-l">
+              {data?.first_name}
+              <p className="text-[14px] text-[#FC6435]">@{data.username}</p>
+            </TableCell>
+            <TableCell className="font-medium h-[75px] text-center text-[#606060]">
+              {data?.organization_name}
+              <p className="text-[14px] text-[#FC6435]">
+                {data?.events?.length} Event(s)
+              </p>
+            </TableCell>
+            <TableCell className="font-medium h-[75px] text-center text-[#606060]">
+              {data?.email}
+              <p className="text-[14px]">{data?.phone_number}</p>
+            </TableCell>
+            <TableCell className="text-[#606060] font-bold text-center">
+              {data?.country}
+            </TableCell>
+            <TableCell className="text-center">
+              {data?.feature === 0 ? (
+                <p className="text-[#FF3B30] w-[64px] flex items-center justify-center rounded-[20px] bg-[#f5e2e2] border border-[#FF3B30] p-[5px]">
+                  No
                 </p>
-                }
-                 
-                </TableCell>
-                <TableCell className="text-[#606060] text-[14px] text-center">
-                  {data.created_at}
-                </TableCell>
-             
-
-                <TableCell className="text-center border-r w-[200px] ">
+              ) : (
+                <p className="text-[#34C759] w-[64px] flex items-center justify-center rounded-[20px] bg-[#dcede1] border border-[#34C759] p-[5px]">
+                  Yes
+                </p>
+              )}
+            </TableCell>
+            <TableCell className="text-[#606060] text-[14px] text-center">
+              {data.created_at}
+            </TableCell>
+            <TableCell className="text-center border-r w-[200px] ">
                   <div className="flex items-center justify-center space-x-2">
                   {activeTab === 'All' && data?.feature === 0 &&
                   <>
@@ -294,11 +287,13 @@ const ManageOrganizer = () => {
                     }
                  </div>
                 </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </section>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  </div>
+</section>
+
 
       <section className="flex items-center justify-between">
   <p className="text-[#606060] text-[14px]">

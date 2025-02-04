@@ -137,18 +137,18 @@ const CategoryComp = () => {
     // Construct the full image URL for preview purposes
     const imageUrl = `https://sub.passpro.africa/storage/${data.image}`;
     setEditImageSrc(imageUrl);
-  
+    setisUpdateCategoryOpen(true);
     // Create a File object manually using the existing image URL
     const newFormData = new FormData();
     const imageName = data.image.split("/").pop() || "image.jpg";
-  
+    
     try {
       // Manually create a File object for FormData
       const file = new File([], imageName, { type: "image/jpeg" }); // Replace with the correct MIME type if necessary
       newFormData.append("image", file);
   
       setEditFormData(newFormData);
-      setisUpdateCategoryOpen(true); // Open the dialog
+      // Open the dialog
     } catch (error) {
       alert("An error occurred while preparing the image. Please try again.");
     }
@@ -170,7 +170,7 @@ const CategoryComp = () => {
     try {
       setisUpdateCategoryOpen(false);
 
-      await updateCategory(activeCategory.id, editFormData);
+      await updateCategory(activeCategory.id, activeCategory.image, editFormData);
   
       // Reset states after successful update
       setCategoryName("");

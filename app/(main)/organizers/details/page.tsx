@@ -120,7 +120,7 @@ const OrganizerDetails = () => {
   )}
       <section className="flex items-center justify-between mb-[57px]">
         <h3 className="text-[20px] font-semibold">
-          Organizer Detail - TechyX360
+          Organizer Detail - {activeOrganizer?.full_name}
         </h3>
         <button
           //   onClick={() => setisCategoryOpen(true)}

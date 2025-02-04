@@ -1,16 +1,29 @@
+"use client"
+import { RootState } from "@/redux/store";
 import React from "react";
+import { useSelector } from "react-redux";
 
 const OrderDetails = () => {
+  const {activeOrder} = useSelector((state: RootState) => state.order);
+
   return (
-    <div className="p-[30px] space-y-[30px]">
-      <h3 className=" font-semibold text-[30px] text-[#606060]">Order Details</h3>
+    <div className=" space-y-[10px] px-[43px] py-[40px]">
+      <h3 className=" font-semibold text-[24px] text-[#606060]">Order Details</h3>
       <section className="border w-full">
         <div className="flex items-center justify-between border-b">
           <p className="px-[40px] py-[40px]  font-semibold text-[#606060]">
             Event Title
           </p>
           <p className="px-[40px]  font-semibold">
-            TechExpo: innovating tomorrow
+            {activeOrder?.event_title}
+          </p>
+        </div>
+        <div className="flex items-center justify-between border-b">
+          <p className="px-[40px] py-[40px]  font-semibold text-[#606060]">
+            Order Id
+          </p>
+          <p className="px-[40px]  text-[#FC6435] font-semibold">
+            {activeOrder?.id}
           </p>
         </div>
         <div className="flex items-center justify-between border-b">
@@ -18,7 +31,7 @@ const OrderDetails = () => {
             Organized By
           </p>
           <p className="px-[40px]  text-[#FC6435] font-semibold">
-            TechExpo solutions
+            {activeOrder?.organized_by}
           </p>
         </div>
         <div className="flex items-center justify-between border-b">
@@ -26,42 +39,61 @@ const OrderDetails = () => {
             Username
           </p>
           <p className="px-[40px]  text-[#FC6435] font-semibold">
-            TechExpo: innovating tomorrow
+            {activeOrder.user_name}
           </p>
         </div>
         <div className="flex items-center justify-between border-b">
           <p className="px-[40px] py-[40px]  font-semibold text-[#606060]">
             Price
           </p>
-          <p className="px-[40px]  font-bold">$2</p>
+          <p className="px-[40px]  font-bold">{activeOrder?.ticket_price}</p>
         </div>
         <div className="flex items-center justify-between border-b">
           <p className="px-[40px] py-[40px]  font-semibold text-[#606060]">
             Quantity
           </p>
-          <p className="px-[40px]  font-bold">$1</p>
+          <p className="px-[40px]  font-bold">{activeOrder.ticket_quantity}</p>
         </div>
         <div className="flex items-center justify-between border-b">
           <p className="px-[40px] py-[40px]  font-semibold text-[#606060]">
             Total
           </p>
-          <p className="px-[40px]  font-bold">$1</p>
+          <p className="px-[40px]  font-bold">{activeOrder?.total_price}</p>
         </div>
         <div className="flex items-center justify-between border-b">
           <p className="px-[40px] py-[40px]  font-semibold text-[#606060]">
             Payment Status
           </p>
-          <p className="w-[99px] mx-[40px] text-[#EB2222] rounded-[20px] flex items-center justify-center bg-[#f5bcbc] border border-[#EB2222] p-[5px]">
-            Pending
+          
+          <p className="px-[40px]">
+          {activeOrder?.payment_status === 'cancelled' &&  <p className="w-[99px] text-[#EB2222] rounded-[20px] flex items-center justify-center bg-[#f5bcbc] border border-[#EB2222] p-[5px]">
+                    {activeOrder?.payment_status}
+                  </p>}
+                  {activeOrder?.payment_status === 'paid' &&  <p className="w-[99px] text-[#34C759] rounded-[20px] flex items-center justify-center bg-[#E9F9F0] border border-[#34C759] p-[5px]">
+                    {activeOrder?.payment_status}
+                  </p>}
+                  {activeOrder?.payment_status === 'pending' &&  <p className="w-[99px] text-[#FFB494] rounded-[20px] flex items-center justify-center bg-[#FFD8C8] border border-[#FFB494] p-[5px]">
+                    {activeOrder?.payment_status}
+                  </p>}
           </p>
+         
         </div>
         <div className="flex items-center justify-between border-b">
           <p className="px-[40px] py-[40px]  font-semibold text-[#606060]">
             Status
           </p>
-          <button className="bg-none mx-[40px] border border-[#FC6435] rounded-[8px] p-[10px] text-[#FC6435] flex items-center space-x-[8px] transition-all active:scale-95">
-            Details
-          </button>
+          <p className="px-[40px]">
+          {activeOrder?.status === 'cancelled' &&  <p className="w-[99px] text-[#EB2222] rounded-[20px] flex items-center justify-center bg-[#f5bcbc] border border-[#EB2222] p-[5px]">
+                    {activeOrder?.status}
+                  </p>}
+                  {activeOrder?.status === 'active' &&  <p className="w-[99px] text-[#34C759] rounded-[20px] flex items-center justify-center bg-[#E9F9F0] border border-[#34C759] p-[5px]">
+                    {activeOrder?.status}
+                  </p>}
+                  {activeOrder?.status === 'pending' &&  <p className="w-[99px] text-[#FFB494] rounded-[20px] flex items-center justify-center bg-[#FFD8C8] border border-[#FFB494] p-[5px]">
+                    {activeOrder?.status}
+                  </p>}
+          </p>
+        
         </div>
       </section>
     </div>

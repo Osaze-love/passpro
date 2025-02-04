@@ -5,6 +5,7 @@ const initialState = {
   organizers: [] as any[], 
   activeOrganizer: {} as any,
   current_page: 1,
+  organizerEmails: [] as any[],
   from : 0,
 last_page: 0,
 per_page: 0,
@@ -36,6 +37,9 @@ export const organizerslice = createSlice({
         state.to = action.payload.to;
         state.total = action.payload.total
       },
+      updateOrganizerEmails: (state, action: PayloadAction<any>) => {
+        state.organizerEmails = action.payload;
+      },
   
    
   },
@@ -46,7 +50,8 @@ export const {
  updateOrganizers,
  updateActiveOrganizer,
  updateOrganizerPagination,
- updateOrganizerCount
+ updateOrganizerCount,
+ updateOrganizerEmails
 //  updateUserToken,
 } = organizerslice.actions;
 

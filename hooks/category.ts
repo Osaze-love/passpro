@@ -83,8 +83,22 @@ const useCategory = () => {
     }
   };
 
-  const updateCategory = async (categoryId: any, formData: FormData) => {
+  const updateCategory = async (categoryId: any, categoryImage: any, formData: FormData) => {
     setLoading(true);
+    const formDataImage = formData.get("image");
+   
+  let formDataImageName: string | null = null;
+  if (formDataImage instanceof File) {
+    formDataImageName = formDataImage.name;
+  }
+
+  const categoryImageName = categoryImage.split("/").pop(); 
+
+  if (formDataImageName && formDataImageName === categoryImageName) {
+    formData.delete("image");
+  }
+    
+
     try {
       const response = await axios.post(`${base_url}/categories/${categoryId}`, formData, {
         headers: {
@@ -92,12 +106,12 @@ const useCategory = () => {
           Accept: "application/json",
         },
       });
-      console.log(response);
       
       await getCategories();
     } catch (error: any) {
+      
       if (error.response?.data?.message === "Unauthenticated.") {
-        dispatch(resetState());
+        // dispatch(resetState());
       } else {
         console.error(error);
         toast({

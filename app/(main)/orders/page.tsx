@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { useRouter } from "next/navigation";
 import useOrder from "@/hooks/order";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { useEffect, useState } from "react";
 import BarLoader from "react-spinners/BarLoader";
@@ -33,9 +33,11 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 import { Button } from "@/components/ui/button";
+import { updateActiveOrder } from '@/redux/slices/orderslice';
 
 const Orders = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const {orders, current_page, from, last_page, per_page, to, total} = useSelector((state: RootState) => state.order);
   const { getOrders, loading, deleteOrder } = useOrder();
   const [search, setSearch] = useState('');
@@ -98,6 +100,9 @@ const Orders = () => {
                 Event Title
               </TableHead>
               <TableHead className="text-white font-extrabold">
+                Order Id
+              </TableHead>
+              <TableHead className="text-white font-extrabold">
                 Username
               </TableHead>
               <TableHead className="text-white font-extrabold">Price</TableHead>
@@ -119,8 +124,11 @@ const Orders = () => {
           <TableBody>
             {orders?.map((data, index) => (
               <TableRow key={index}>
-                <TableCell className=" h-[75px] text-[#606060] font-bold border-l w-[200px]">
+                <TableCell className=" h-[75px] text-[#606060] font-bold border-l w-[100px]">
                   {data?.event_title}
+                </TableCell>
+                <TableCell className="text-[#606060] font-bold ">
+                  {data?.id}
                 </TableCell>
                 <TableCell className="text-[#606060] font-bold ">
                   {data?.user_name}
@@ -164,8 +172,10 @@ const Orders = () => {
                   <button
                     className="bg-none border border-[#FC6435] rounded-[8px] p-[10px] text-[#FC6435] flex items-center space-x-[8px] transition-all active:scale-95"
                     onClick={() => {
-                      setOrderData(data);
-                     setisOpen(true);
+                    //   setOrderData(data);
+                    //  setisOpen(true);
+                     dispatch(updateActiveOrder(data))
+                     router.push('/orders/details')
                     }}
                   >
                     Details

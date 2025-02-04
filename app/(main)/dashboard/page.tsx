@@ -1,10 +1,27 @@
+"use client"
 import { Button } from "@/components/ui/button";
+import useGlobal from "@/hooks/global";
+import { RootState } from "@/redux/store";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
+import BarLoader from "react-spinners/BarLoader";
 
 const page = () => {
+  const { getDashboardData, loading } = useGlobal();
+  const { dashboardData } = useSelector((state: RootState) => state.search);
+  useEffect(() => {
+    getDashboardData()
+  },[])
   return (
     <div className="bg-[#fdf7f4] space-y-[36px] px-[43px] py-[24px]">
+      {(loading ) && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-85">
+     
+        <BarLoader color="#FC6435" />
+       
+    </div> 
+  )}
       <div className="flex space-x-[8px] bg-[#FFEDE5] w-[573px] items-center  px-[18px] py-[12px] rounded-[4px]">
         <h2 className="text-[#8F8F8F]  font-medium">Home</h2>
         <Image
@@ -28,7 +45,7 @@ const page = () => {
             <h2 className="text-[14px] font-medium">All Events</h2>
           </div>
           <div className="flex w-full items-center justify-between">
-            <p className="font-bold ">403</p>
+            <p className="font-bold ">{dashboardData?.event_overview?.total_events}</p>
             <Button
               variant="outline"
               className="flex space-x-1 items-center border-transparent hover:bg-transparent cursor-pointer active:scale-90 transition-all  focus-visible:ring-0 focus-visible:ring-transparent shadow-none"
@@ -51,10 +68,10 @@ const page = () => {
               width={38}
               alt="eventsallIcon"
             />
-            <h2 className="text-[14px] font-medium">Pending Events</h2>
+            <h2 className="text-[14px] font-medium">Upcoming Events</h2>
           </div>
           <div className="flex w-full items-center justify-between">
-            <p className="font-bold ">403</p>
+            <p className="font-bold ">{dashboardData?.event_overview?.upcoming_events}</p>
             <Button
               variant="outline"
               className="flex space-x-1 items-center border-transparent hover:bg-transparent cursor-pointer active:scale-90 transition-all  focus-visible:ring-0 focus-visible:ring-transparent shadow-none"
@@ -77,10 +94,10 @@ const page = () => {
               width={38}
               alt="eventsallIcon"
             />
-            <h2 className="text-[14px] font-medium">Approved Events</h2>
+            <h2 className="text-[14px] font-medium">Past Events</h2>
           </div>
           <div className="flex w-full items-center justify-between">
-            <p className="font-bold ">403</p>
+            <p className="font-bold ">{dashboardData?.event_overview?.past_events}</p>
             <Button
               variant="outline"
               className="flex space-x-1 items-center border-transparent hover:bg-transparent cursor-pointer active:scale-90 transition-all  focus-visible:ring-0 focus-visible:ring-transparent shadow-none"
@@ -103,10 +120,10 @@ const page = () => {
               width={38}
               alt="eventsallIcon"
             />
-            <h2 className="text-[14px] font-medium">Cancelled Events</h2>
+            <h2 className="text-[14px] font-medium">Total Tickets Sold</h2>
           </div>
           <div className="flex w-full items-center justify-between">
-            <p className="font-bold ">403</p>
+            <p className="font-bold ">{dashboardData?.ticket_sales?.total_tickets_sold}</p>
             <Button
               variant="outline"
               className="flex space-x-1 items-center border-transparent hover:bg-transparent cursor-pointer active:scale-90 transition-all  focus-visible:ring-0 focus-visible:ring-transparent shadow-none"
@@ -133,8 +150,8 @@ const page = () => {
               alt="logousers"
             />
             <div className="gap-[8px]">
-              <p className="font-medium text-[14px]">Total Users</p>
-              <h2 className="font-bold text-[22px]">420</h2>
+              <p className="font-medium text-[14px]">Total organizers</p>
+              <h2 className="font-bold text-[22px]">{dashboardData?.customer_attendee_analytics?.total_organizers}</h2>
             </div>
           </div>
           <div>
@@ -155,8 +172,8 @@ const page = () => {
               alt="logousers"
             />
             <div className="gap-[8px]">
-              <p className="font-medium text-[14px]">Active Users</p>
-              <h2 className="font-bold text-[22px]">40</h2>
+              <p className="font-medium text-[14px]">Active Organizers</p>
+              <h2 className="font-bold text-[22px]">{dashboardData?.customer_attendee_analytics?.active_organizers}</h2>
             </div>
           </div>
           <div>
@@ -177,8 +194,8 @@ const page = () => {
               alt="logousers"
             />
             <div className="gap-[8px]">
-              <p className="font-medium text-[14px]">Email Unverified Users</p>
-              <h2 className="font-bold text-[22px]">12</h2>
+              <p className="font-medium text-[14px]">Total Tickets Revenue</p>
+              <h2 className="font-bold text-[22px]">₦{dashboardData?.financial_metrics?.total_profit}</h2>
             </div>
           </div>
           <div>
@@ -199,8 +216,8 @@ const page = () => {
               alt="logousers"
             />
             <div className="gap-[8px]">
-              <p className="font-medium text-[14px]">Verified Users</p>
-              <h2 className="font-bold text-[22px]">420</h2>
+              <p className="font-medium text-[14px]">Inactive Organizers</p>
+              <h2 className="font-bold text-[22px]">{dashboardData?.customer_attendee_analytics?.non_active_organizers}</h2>
             </div>
           </div>
           <div>
@@ -222,7 +239,7 @@ const page = () => {
             />
             <div className="gap-[8px]">
               <p className="font-medium text-[14px]">Total Organizers</p>
-              <h2 className="font-bold text-[22px]">420</h2>
+              <h2 className="font-bold text-[22px]">{dashboardData?.customer_attendee_analytics?.total_organizers}</h2>
             </div>
           </div>
           <div>
@@ -244,7 +261,7 @@ const page = () => {
             />
             <div className="gap-[8px]">
               <p className="font-medium text-[14px]">Active Organizers</p>
-              <h2 className="font-bold text-[22px]">420</h2>
+              <h2 className="font-bold text-[22px]">{dashboardData?.customer_attendee_analytics?.active_organizers}</h2>
             </div>
           </div>
           <div>
@@ -265,8 +282,8 @@ const page = () => {
               alt="logousers"
             />
             <div className="gap-[8px]">
-              <p className="font-medium text-[14px]">Verified Organizers</p>
-              <h2 className="font-bold text-[22px]">420</h2>
+              <p className="font-medium text-[14px]">Total Event Attendees</p>
+              <h2 className="font-bold text-[22px]">-</h2>
             </div>
           </div>
           <div>
@@ -287,8 +304,8 @@ const page = () => {
               alt="logousers"
             />
             <div className="gap-[8px]">
-              <p className="font-medium text-[14px]">Unverified Organizers</p>
-              <h2 className="font-bold text-[22px]">30</h2>
+              <p className="font-medium text-[14px]">Total Unattendees</p>
+              <h2 className="font-bold text-[22px]">{dashboardData?.no_show_rate}</h2>
             </div>
           </div>
           <div>
@@ -303,7 +320,7 @@ const page = () => {
       </section>
 
       <section className="space-y-[9px] bg-white rounded-[8px] p-4">
-        <h3 className="text-[18px] font-bold">Withdrawals</h3>
+        <h3 className="text-[18px] font-bold">Finance</h3>
         <div className="grid grid-cols-1 md:grid-cols-2">
           <div className="flex items-center justify-between w-full h-[102px] px-[20px] shadow-sm border-r border-b border-[#D9D9D9] ">
             <div className="flex items-center space-x-[32px]">
@@ -314,9 +331,9 @@ const page = () => {
                 alt="logousers"
               />
               <div className="gap-[8px]">
-                <p className="font-medium text-[22px]">₦502,000.25</p>
+                <p className="font-medium text-[22px]">₦{dashboardData?.financial_metrics?.total_withdrawals_initiated}</p>
                 <h2 className="font-medium text-[14px] text-[#8F8F8F]">
-                  Total Withdrawn
+                  Total Withdrawal
                 </h2>
               </div>
             </div>
@@ -332,15 +349,15 @@ const page = () => {
           <div className="flex items-center justify-between w-full h-[102px] px-[20px] shadow-sm  border-b border-[#D9D9D9] ">
             <div className="flex items-center space-x-[32px]">
               <Image
-                src={"/logo/withdrawpending.svg"}
+                src={"/logo/approvenew.svg"}
                 height={55}
                 width={55}
                 alt="logousers"
               />
               <div className="gap-[8px]">
-                <p className="font-medium text-[22px]">₦502,000.25</p>
+                <p className="font-medium text-[22px]">₦{dashboardData?.financial_metrics?.total_approved_withdrawals}</p>
                 <h2 className="font-medium text-[14px] text-[#8F8F8F]">
-                  Pending Withdrawak
+                  Approved Withdrawal
                 </h2>
               </div>
             </div>
@@ -353,7 +370,7 @@ const page = () => {
               />
             </div>
           </div>
-          <div className="flex items-center justify-between w-full h-[102px] px-[20px] shadow-sm border-r ">
+          <div className="flex items-center justify-between w-full h-[102px] px-[20px] shadow-sm border-r border-b">
             <div className="flex items-center space-x-[32px]">
               <Image
                 src={"/logo/withdrawrejected.svg"}
@@ -362,7 +379,7 @@ const page = () => {
                 alt="logousers"
               />
               <div className="gap-[8px]">
-                <p className="font-medium text-[22px]">₦502,000.25</p>
+                <p className="font-medium text-[22px]">₦{dashboardData?.financial_metrics?.total_declined_withdrawals}</p>
                 <h2 className="font-medium text-[14px] text-[#8F8F8F]">
                   Rejected Withdrawal
                 </h2>
@@ -377,7 +394,7 @@ const page = () => {
               />
             </div>
           </div>
-          <div className="flex items-center justify-between w-full h-[102px] px-[20px] shadow-sm ">
+          <div className="flex items-center justify-between w-full h-[102px] px-[20px] shadow-sm border-b">
             <div className="flex items-center space-x-[32px]">
               <Image
                 src={"/logo/withdrawcharge.svg"}
@@ -386,9 +403,57 @@ const page = () => {
                 alt="logousers"
               />
               <div className="gap-[8px]">
-                <p className="font-medium text-[22px]">₦502,000.25</p>
+                <p className="font-medium text-[22px]">₦{dashboardData?.financial_metrics?.total_profit}</p>
                 <h2 className="font-medium text-[14px] text-[#8F8F8F]">
-                  Withdrawal Charge
+                  Total Profit
+                </h2>
+              </div>
+            </div>
+            <div>
+              <Image
+                src="/icons/rightarrowdark.svg"
+                width={8}
+                height={13}
+                alt="rightarrow"
+              />
+            </div>
+          </div>
+          <div className="flex items-center justify-between w-full h-[102px] px-[20px] shadow-sm  border-b border-[#D9D9D9] border-r ">
+            <div className="flex items-center space-x-[32px]">
+              <Image
+                src={"/logo/withdrawpending.svg"}
+                height={55}
+                width={55}
+                alt="logousers"
+              />
+              <div className="gap-[8px]">
+                <p className="font-medium text-[22px]">₦{dashboardData?.financial_metrics?.total_pending_withdrawals}</p>
+                <h2 className="font-medium text-[14px] text-[#8F8F8F]">
+                  Pending Withdrawal
+                </h2>
+              </div>
+            </div>
+            <div>
+              <Image
+                src="/icons/rightarrowdark.svg"
+                width={8}
+                height={13}
+                alt="rightarrow"
+              />
+            </div>
+          </div>
+          <div className="flex items-center justify-between w-full h-[102px] px-[20px] shadow-sm  border-b border-[#D9D9D9] ">
+            <div className="flex items-center space-x-[32px]">
+              <Image
+                src={"/logo/revenuenew.svg"}
+                height={55}
+                width={55}
+                alt="logousers"
+              />
+              <div className="gap-[8px]">
+                <p className="font-medium text-[22px]">₦{dashboardData?.ticket_sales?.total_revenue}</p>
+                <h2 className="font-medium text-[14px] text-[#8F8F8F]">
+                  Revenue From Tickets
                 </h2>
               </div>
             </div>
@@ -404,10 +469,10 @@ const page = () => {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-[32px]">
+      {/* <section className="grid grid-cols-1 md:grid-cols-2 gap-[32px]">
         <Image src={"/chart1.svg"} height={488} width={625} alt="chart" />
         <Image src={"/chart2.svg"} height={488} width={625} alt="chart" />
-      </section>
+      </section> */}
     </div>
   );
 };

@@ -16,6 +16,7 @@ import { orderslice } from "./slices/orderslice";
 import { withdrawslice } from "./slices/withdrawslice";
 import { organizerslice } from "./slices/organizerslice";
 import { eventslice } from "./slices/eventslice";
+import { searchslice } from "./slices/searchslice";
 
 // Import your slice correctly
 
@@ -28,6 +29,7 @@ const rootReducer = combineReducers({
   withdraw: withdrawslice.reducer,
   organizer: organizerslice.reducer,
   event: eventslice.reducer,
+  search : searchslice.reducer,
 });
 
 // Persist configuration

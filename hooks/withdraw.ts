@@ -81,12 +81,14 @@ const useWithdraw = () => {
         }
       );
 
-      await axios.post(`${base_url}/transfer/callback?reference=${transaction_reference}`)
+      // await axios.post(`${base_url}/transfer/callback?reference=${transaction_reference}`)
 
       toast({
         variant: "default",
         title: "Withdrawal Approved",
       });
+      router.push('/withdrawals')
+
     } catch (error: any) {
       if (error.response?.data?.message === "Unauthenticated.") {
         dispatch(resetState());
