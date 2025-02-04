@@ -46,7 +46,7 @@ const page = () => {
             <h2 className="text-[14px] font-medium">All Events</h2>
           </div>
           <div className="flex w-full items-center justify-between">
-            <p className="font-bold ">{dashboardData?.event_overview?.total_events}</p>
+            <p className="font-bold ">{dashboardData?.event_overview?.total_events ?? "-"}</p>
             <Button
               variant="outline"
               className="flex space-x-1 items-center border-transparent hover:bg-transparent cursor-pointer active:scale-90 transition-all  focus-visible:ring-0 focus-visible:ring-transparent shadow-none"
@@ -72,7 +72,7 @@ const page = () => {
             <h2 className="text-[14px] font-medium">Upcoming Events</h2>
           </div>
           <div className="flex w-full items-center justify-between">
-            <p className="font-bold ">{dashboardData?.event_overview?.upcoming_events}</p>
+            <p className="font-bold ">{dashboardData?.event_overview?.upcoming_events ?? "-"}</p>
             <Button
               variant="outline"
               className="flex space-x-1 items-center border-transparent hover:bg-transparent cursor-pointer active:scale-90 transition-all  focus-visible:ring-0 focus-visible:ring-transparent shadow-none"
@@ -98,7 +98,7 @@ const page = () => {
             <h2 className="text-[14px] font-medium">Past Events</h2>
           </div>
           <div className="flex w-full items-center justify-between">
-            <p className="font-bold ">{dashboardData?.event_overview?.past_events}</p>
+            <p className="font-bold ">{dashboardData?.event_overview?.past_events ?? "-"}</p>
             <Button
               variant="outline"
               className="flex space-x-1 items-center border-transparent hover:bg-transparent cursor-pointer active:scale-90 transition-all  focus-visible:ring-0 focus-visible:ring-transparent shadow-none"
@@ -124,7 +124,7 @@ const page = () => {
             <h2 className="text-[14px] font-medium">Total Tickets Sold</h2>
           </div>
           <div className="flex w-full items-center justify-between">
-            <p className="font-bold ">{dashboardData?.ticket_sales?.total_tickets_sold}</p>
+            <p className="font-bold ">{dashboardData?.ticket_sales?.total_tickets_sold ?? "-"}</p>
             <Button
               variant="outline"
               className="flex space-x-1 items-center border-transparent hover:bg-transparent cursor-pointer active:scale-90 transition-all  focus-visible:ring-0 focus-visible:ring-transparent shadow-none"
@@ -152,7 +152,7 @@ const page = () => {
             />
             <div className="gap-[8px]">
               <p className="font-medium text-[14px]">Total organizers</p>
-              <h2 className="font-bold text-[22px]">{dashboardData?.customer_attendee_analytics?.total_organizers}</h2>
+              <h2 className="font-bold text-[22px]">{dashboardData?.customer_attendee_analytics?.total_organizers ?? "-"}</h2>
             </div>
           </div>
           <div>
@@ -174,7 +174,7 @@ const page = () => {
             />
             <div className="gap-[8px]">
               <p className="font-medium text-[14px]">Active Organizers</p>
-              <h2 className="font-bold text-[22px]">{dashboardData?.customer_attendee_analytics?.active_organizers}</h2>
+              <h2 className="font-bold text-[22px]">{dashboardData?.customer_attendee_analytics?.active_organizers ?? "-"}</h2>
             </div>
           </div>
           <div>
@@ -196,7 +196,7 @@ const page = () => {
             />
             <div className="gap-[8px]">
               <p className="font-medium text-[14px]">Total Tickets Revenue</p>
-              <h2 className="font-bold text-[22px]">₦{dashboardData?.financial_metrics?.total_profit}</h2>
+              <h2 className="font-bold text-[22px]">₦{dashboardData?.financial_metrics?.total_profit ?? "-"}</h2>
             </div>
           </div>
           <div>
@@ -218,7 +218,7 @@ const page = () => {
             />
             <div className="gap-[8px]">
               <p className="font-medium text-[14px]">Inactive Organizers</p>
-              <h2 className="font-bold text-[22px]">{dashboardData?.customer_attendee_analytics?.non_active_organizers}</h2>
+              <h2 className="font-bold text-[22px]">{dashboardData?.customer_attendee_analytics?.non_active_organizers ?? "-"}</h2>
             </div>
           </div>
           <div>
@@ -240,7 +240,7 @@ const page = () => {
             />
             <div className="gap-[8px]">
               <p className="font-medium text-[14px]">Total Organizers</p>
-              <h2 className="font-bold text-[22px]">{dashboardData?.customer_attendee_analytics?.total_organizers}</h2>
+              <h2 className="font-bold text-[22px]">{dashboardData?.customer_attendee_analytics?.total_organizers ?? "-"}</h2>
             </div>
           </div>
           <div>
@@ -262,7 +262,7 @@ const page = () => {
             />
             <div className="gap-[8px]">
               <p className="font-medium text-[14px]">Active Organizers</p>
-              <h2 className="font-bold text-[22px]">{dashboardData?.customer_attendee_analytics?.active_organizers}</h2>
+              <h2 className="font-bold text-[22px]">{dashboardData?.customer_attendee_analytics?.active_organizers ?? "-"}</h2>
             </div>
           </div>
           <div>
@@ -306,7 +306,7 @@ const page = () => {
             />
             <div className="gap-[8px]">
               <p className="font-medium text-[14px]">Total Unattendees</p>
-              <h2 className="font-bold text-[22px]">{dashboardData?.no_show_rate}</h2>
+              <h2 className="font-bold text-[22px]">{dashboardData?.no_show_rate ?? "-"}</h2>
             </div>
           </div>
           <div>
@@ -332,7 +332,7 @@ const page = () => {
                 alt="logousers"
               />
               <div className="gap-[8px]">
-                <p className="font-medium text-[22px]">₦{dashboardData?.financial_metrics?.total_withdrawals_initiated}</p>
+                <p className="font-medium text-[22px]">₦{dashboardData?.financial_metrics?.total_withdrawals_initiated ?? "-"}</p>
                 <h2 className="font-medium text-[14px] text-[#8F8F8F]">
                   Total Withdrawal
                 </h2>
@@ -356,7 +356,7 @@ const page = () => {
                 alt="logousers"
               />
               <div className="gap-[8px]">
-                <p className="font-medium text-[22px]">₦{dashboardData?.financial_metrics?.total_approved_withdrawals}</p>
+                <p className="font-medium text-[22px]">₦{dashboardData?.financial_metrics?.total_approved_withdrawals ?? "-"}</p>
                 <h2 className="font-medium text-[14px] text-[#8F8F8F]">
                   Approved Withdrawal
                 </h2>
@@ -380,7 +380,7 @@ const page = () => {
                 alt="logousers"
               />
               <div className="gap-[8px]">
-                <p className="font-medium text-[22px]">₦{dashboardData?.financial_metrics?.total_declined_withdrawals}</p>
+                <p className="font-medium text-[22px]">₦{dashboardData?.financial_metrics?.total_declined_withdrawals ?? "-"}</p>
                 <h2 className="font-medium text-[14px] text-[#8F8F8F]">
                   Rejected Withdrawal
                 </h2>
@@ -404,7 +404,7 @@ const page = () => {
                 alt="logousers"
               />
               <div className="gap-[8px]">
-                <p className="font-medium text-[22px]">₦{dashboardData?.financial_metrics?.total_profit}</p>
+                <p className="font-medium text-[22px]">₦{dashboardData?.financial_metrics?.total_profit ?? "-"}</p>
                 <h2 className="font-medium text-[14px] text-[#8F8F8F]">
                   Total Profit
                 </h2>
@@ -428,7 +428,7 @@ const page = () => {
                 alt="logousers"
               />
               <div className="gap-[8px]">
-                <p className="font-medium text-[22px]">₦{dashboardData?.financial_metrics?.total_pending_withdrawals}</p>
+                <p className="font-medium text-[22px]">₦{dashboardData?.financial_metrics?.total_pending_withdrawals ?? "-"}</p>
                 <h2 className="font-medium text-[14px] text-[#8F8F8F]">
                   Pending Withdrawal
                 </h2>
@@ -452,7 +452,7 @@ const page = () => {
                 alt="logousers"
               />
               <div className="gap-[8px]">
-                <p className="font-medium text-[22px]">₦{dashboardData?.ticket_sales?.total_revenue}</p>
+                <p className="font-medium text-[22px]">₦{dashboardData?.ticket_sales?.total_revenue ?? "-"}</p>
                 <h2 className="font-medium text-[14px] text-[#8F8F8F]">
                   Revenue From Tickets
                 </h2>
