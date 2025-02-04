@@ -31,8 +31,7 @@ const useGlobal = () => {
         },
       });
       dispatch(updateGlobalSearch(response.data.data))
-      
-      
+     
      
     } catch (error: any) {
       if (error.response?.data?.message === "Unauthenticated.") {

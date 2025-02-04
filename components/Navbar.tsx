@@ -70,11 +70,11 @@ const Navbar = () => {
             ref={dropdownRef}
             className="absolute z-10 bg-white shadow-md w-full max-h-[300px] overflow-y-auto mt-2 rounded p-4"
           >
-            {events.length > 0 && (
+            {events?.length > 0 && (
               <div className="mb-4">
                 <h4 className="font-semibold text-gray-700">Events</h4>
                 <ul className="mt-2 space-y-1">
-                  {events.map((event: any, index: number) => (
+                  {events?.map((event: any, index: number) => (
                     <li
                       key={index}
                       className="p-2 bg-gray-100 rounded hover:bg-gray-200 cursor-pointer text-[12px]"
@@ -84,8 +84,8 @@ const Navbar = () => {
                         router.push("/events/details");
                       }}
                     >
-                      <p>{event.event_name}</p>
-                     <p>{event.event_description.slice(0, 30)}</p>
+                      <p>{event?.event_name}</p>
+                     <p>{event?.event_description.slice(0, 30)}</p>
                      
                     </li>
                   ))}
@@ -93,18 +93,18 @@ const Navbar = () => {
               </div>
             )}
 
-            {tickets.length > 0 && (
+            {tickets?.length > 0 && (
               <div className="mb-4">
                 <h4 className="font-semibold text-gray-700">Tickets</h4>
                 <ul className="mt-2 space-y-1">
-                  {tickets.map((ticket: any, index: number) => (
+                  {tickets?.map((ticket: any, index: number) => (
                      <li
                      key={index}
                      className="p-2 bg-gray-100 rounded hover:bg-gray-200 cursor-pointer text-[12px]"
             
                    >
-                     <p>{ticket.ticket_name}</p>
-                    <p>{ticket.ticket_description.slice(0, 30)}</p>
+                     <p>{ticket?.ticket_name}</p>
+                    <p>{ticket?.ticket_description.slice(0, 30)}</p>
                     
                    </li>
                   ))}
@@ -112,11 +112,11 @@ const Navbar = () => {
               </div>
             )}
 
-            {orders.length > 0 && (
+            {orders?.length > 0 && (
               <div className="mb-4">
                 <h4 className="font-semibold text-gray-700">Orders</h4>
                 <ul className="mt-2 space-y-1">
-                  {orders.map((order: any, index: number) => (
+                  {orders?.map((order: any, index: number) => (
                      <li
                      key={index}
                      className="p-2 bg-gray-100 rounded hover:bg-gray-200 cursor-pointer text-[12px]"
@@ -126,8 +126,8 @@ const Navbar = () => {
                      setShowDropdown(false);
                      router.push('/orders/details');
                     }}                   >
-                     <p>{order.event_title}</p>
-                    <p>{order.ticket_name}</p>
+                     <p>{order?.event_title}</p>
+                    <p>{order?.ticket_name}</p>
                     
                    </li>
                   ))}
@@ -135,11 +135,11 @@ const Navbar = () => {
               </div>
             )}
 
-            {organizers.length > 0 && (
+            {organizers?.length > 0 && (
               <div className="mb-4">
                 <h4 className="font-semibold text-gray-700">Organizers</h4>
                 <ul className="mt-2 space-y-1">
-                  {organizers.map((organizer: any, index: number) => (
+                  {organizers?.map((organizer: any, index: number) => (
                                   <li
                                        key={index}
                                        className="p-2 bg-gray-100 rounded hover:bg-gray-200 cursor-pointer text-[12px]"
@@ -151,8 +151,8 @@ const Navbar = () => {
                                         
                                        }}     
                                      >
-                                       <p>{organizer.first_name}</p>
-                                      <p>{organizer.email}</p>
+                                       <p>{organizer?.first_name}</p>
+                                      <p>{organizer?.email}</p>
                                       
                                      </li>
                   ))}
@@ -160,11 +160,11 @@ const Navbar = () => {
               </div>
             )}
 
-            {support.length > 0 && (
+            {support?.length > 0 && (
               <div className="mb-4">
                 <h4 className="font-semibold text-gray-700">Support</h4>
                 <ul className="mt-2 space-y-1">
-                  {support.map((supportItem: any, index: number) => (
+                  {support?.map((supportItem: any, index: number) => (
                                         <li
                                         key={index}
                                         className="p-2 bg-gray-100 rounded hover:bg-gray-200 cursor-pointer text-[12px]"
@@ -174,8 +174,8 @@ const Navbar = () => {
                                            router.push("/support/reply");
                                         }}
                                       >
-                                        <p>{supportItem.subject}</p>
-                                       <p>{supportItem.status}</p>
+                                        <p>{supportItem?.subject}</p>
+                                       <p>{supportItem?.status}</p>
                                        
                                       </li>
                   ))}
@@ -183,11 +183,11 @@ const Navbar = () => {
               </div>
             )}
 
-            {withdrawals.length > 0 && (
+            {withdrawals?.length > 0 && (
               <div className="mb-4">
                 <h4 className="font-semibold text-gray-700">Withdrawals</h4>
                 <ul className="mt-2 space-y-1">
-                  {withdrawals.map((withdrawal: any, index: number) => (
+                  {withdrawals?.map((withdrawal: any, index: number) => (
                                        <li
                                        key={index}
                                        className="p-2 bg-gray-100 rounded hover:bg-gray-200 cursor-pointer text-[12px]"
@@ -197,20 +197,20 @@ const Navbar = () => {
                                         router.push("/withdrawals/details");
                                                           }}
                                      >
-                                       <p>{withdrawal.transaction_reference}</p>
-                                      <p>{withdrawal.status}</p>
+                                       <p>{withdrawal?.transaction_reference}</p>
+                                      <p>{withdrawal?.status}</p>
                                       
                                      </li>
                   ))}
                 </ul>
               </div>
             )}
-             {events.length === 0 &&
-      tickets.length === 0 &&
-      orders.length === 0 &&
-      organizers.length === 0 &&
-      support.length === 0 &&
-      withdrawals.length === 0 && (
+             {events?.length === 0 &&
+      tickets?.length === 0 &&
+      orders?.length === 0 &&
+      organizers?.length === 0 &&
+      support?.length === 0 &&
+      withdrawals?.length === 0 && (
         <div className="text-gray-500 text-sm text-center">
           No search result for {query}.
         </div>
