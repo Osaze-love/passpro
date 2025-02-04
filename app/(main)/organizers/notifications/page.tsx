@@ -82,7 +82,7 @@ const Notifications = () => {
     setEditorContent('<p>Enter Text</p>');
     setRecipientGroup('all');
     setSelectedEmails(initialEmailsState); 
-    window.location.reload();
+    // window.location.reload();
 
   }
   const isReady = subject && (recipientGroup !== 'selected' || selectedEmails);
