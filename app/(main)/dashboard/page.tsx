@@ -8,8 +8,9 @@ import { useSelector } from "react-redux";
 import BarLoader from "react-spinners/BarLoader";
 
 const page = () => {
-  const { getDashboardData, loading } = useGlobal();
   const { dashboardData } = useSelector((state: RootState) => state.search);
+  const { getDashboardData, loading } = useGlobal();
+
   useEffect(() => {
     getDashboardData()
   },[])
@@ -34,7 +35,7 @@ const page = () => {
       </div>
 
       <div className="grid grid-cols-4  gap-[16px]">
-        <div className="bg-white w-[full] h-[120px] rounded-[8px] shadow-md p-[20px] space-y-4">
+        <div className="bg-white w-full h-[120px] rounded-[8px] shadow-md p-[20px] space-y-4">
           <div className="flex items-center gap-[19px]">
             <Image
               src={"/logo/eventsall.svg"}

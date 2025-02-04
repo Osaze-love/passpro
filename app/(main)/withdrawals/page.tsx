@@ -153,7 +153,7 @@ const Withdrawals = () => {
               alt="logousers"
             />
             <div className="gap-[8px]">
-              <p className="font-medium ">₦{countData.successfulWithdrawalTotal}</p>
+              <p className="font-medium ">₦{countData?.successfulWithdrawalTotal}</p>
               <h2 className="font-medium text-[14px] text-[#8F8F8F]">
                 Approved Withdrawal
               </h2>
