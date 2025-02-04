@@ -16,7 +16,7 @@ const page = () => {
   },[])
   return (
     <div className="bg-[#fdf7f4] space-y-[36px] px-[43px] py-[24px]">
-      {(loading ) && (
+      {loading  && (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-85">
      
         <BarLoader color="#FC6435" />
