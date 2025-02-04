@@ -284,7 +284,7 @@ const page = () => {
             />
             <div className="gap-[8px]">
               <p className="font-medium text-[14px]">Total Event Attendees</p>
-              <h2 className="font-bold text-[22px]">-</h2>
+              <h2 className="font-bold text-[22px]">{dashboardData?.customer_attendee_analytics?.total_attendees ?? "-"}</h2>
             </div>
           </div>
           <div>
