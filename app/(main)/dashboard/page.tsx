@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import BarLoader from "react-spinners/BarLoader";
 
 const page = () => {
-  const { dashboardData } = useSelector((state: RootState) => state.search);
+  const { dashboardData = {} } = useSelector((state: RootState) => state.search);
   const { getDashboardData, loading } = useGlobal();
 
   useEffect(() => {
