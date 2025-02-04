@@ -8,15 +8,16 @@ import { useSelector } from "react-redux";
 import BarLoader from "react-spinners/BarLoader";
 
 const page = () => {
-  const { dashboardData = {} } = useSelector((state: RootState) => state.search);
-  const { getDashboardData, loading } = useGlobal();
+  // const { dashboardData = {} } = useSelector((state: RootState) => state.search);
+  // const { getDashboardData, loading } = useGlobal();
 
-  useEffect(() => {
-    getDashboardData()
-  },[])
+  // useEffect(() => {
+  //   getDashboardData()
+  // },[])
   return (
     <div className="bg-[#fdf7f4] space-y-[36px] px-[43px] py-[24px]">
-      {loading  && (
+      <p>Gadus</p>
+      {/* {loading  && (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-85">
      
         <BarLoader color="#FC6435" />
@@ -32,7 +33,7 @@ const page = () => {
           alt="rightarrow"
         />
         <h2 className="text-[#FC6435] font-medium">Dashboard</h2>
-      </div>
+      </div> */}
 
       {/* <div className="grid grid-cols-4  gap-[16px]">
         <div className="bg-white w-full h-[120px] rounded-[8px] shadow-md p-[20px] space-y-4">
@@ -139,9 +140,9 @@ const page = () => {
             </Button>
           </div>
         </div>
-      </div>
+      </div> */}
 
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-[32px]">
+      {/* <section className="grid grid-cols-1 md:grid-cols-2 gap-[32px]">
         <div className="flex items-center justify-between w-full h-[102px] px-[20px] shadow-md border border-[#1215C4] rounded-[8px]">
           <div className="flex items-center space-x-[32px]">
             <Image
