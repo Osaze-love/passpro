@@ -34,7 +34,7 @@ const page = () => {
         <h2 className="text-[#FC6435] font-medium">Dashboard</h2>
       </div>
 
-      <div className="grid grid-cols-4  gap-[16px]">
+      {/* <div className="grid grid-cols-4  gap-[16px]">
         <div className="bg-white w-full h-[120px] rounded-[8px] shadow-md p-[20px] space-y-4">
           <div className="flex items-center gap-[19px]">
             <Image
@@ -468,7 +468,7 @@ const page = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* <section className="grid grid-cols-1 md:grid-cols-2 gap-[32px]">
         <Image src={"/chart1.svg"} height={488} width={625} alt="chart" />
