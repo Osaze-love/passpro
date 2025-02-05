@@ -3,7 +3,6 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState = {
   events: [] as any[],   
-  tickets: [] as any[],
   orders: [] as any[],
   support: [] as any[],
   withdrawals: [] as any[],
@@ -18,7 +17,6 @@ export const searchslice = createSlice({
   reducers: {
     updateGlobalSearch: (state, action: PayloadAction<any>) => {
         state.events = action.payload.events;
-        state.tickets = action.payload.tickets;
         state.orders = action.payload.orders;
         state.support = action.payload.support_tickets;
         state.withdrawals = action.payload.transactions;

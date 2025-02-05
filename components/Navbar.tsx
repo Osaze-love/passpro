@@ -20,7 +20,7 @@ import { updateActiveWithdrawal } from "@/redux/slices/withdrawslice";
 
 const Navbar = () => {
   const { usersDetail } = useSelector((state: RootState) => state.user);
-  const { events, tickets, orders, organizers, support, withdrawals } = useSelector((state: RootState) => state.search);
+  const { events, orders, organizers, support, withdrawals } = useSelector((state: RootState) => state.search);
   const router = useRouter();
   const [query, setQuery] = useState("");
   const { getResults, loading } = useGlobal();
@@ -38,7 +38,7 @@ const Navbar = () => {
   };
 
   useClickOutside(dropdownRef, () => setShowDropdown(false)); 
-  
+
   return (
     <div className="sticky bg-[#FC6435] top-0 flex items-center justify-between border-b z-30">
          {(loading || oneLoading) && (
@@ -93,7 +93,7 @@ const Navbar = () => {
               </div>
             )}
 
-            {tickets?.length > 0 && (
+            {/* {tickets?.length > 0 && (
               <div className="mb-4">
                 <h4 className="font-semibold text-gray-700">Tickets</h4>
                 <ul className="mt-2 space-y-1">
@@ -110,7 +110,7 @@ const Navbar = () => {
                   ))}
                 </ul>
               </div>
-            )}
+            )} */}
 
             {orders?.length > 0 && (
               <div className="mb-4">
@@ -206,7 +206,6 @@ const Navbar = () => {
               </div>
             )}
              {events?.length === 0 &&
-      tickets?.length === 0 &&
       orders?.length === 0 &&
       organizers?.length === 0 &&
       support?.length === 0 &&
