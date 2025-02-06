@@ -120,7 +120,7 @@ const page = () => {
         <div className='flex flex-col items-left gap-[5px]'>
           <h2 className='font-semibold text-[15px]'>Previous Messages</h2>
           {activeTicketDetails.map((ticket, index) => (
-             <p key={index} className='text-[13px]'>{ticket.message}</p>
+             <p key={index} className='text-[13px]'>-{ticket.message}</p>
           ))}
           {activeTicketDetails.length < 1 && <p className='text-[13px]'>No previous message</p>} 
         </div>
