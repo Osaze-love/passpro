@@ -167,14 +167,14 @@ const Details = () => {
                 </p>
                   }
               </div>
-              <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
+              {/* <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
                 <p className="text-[14px] text-[#343434] font-semibold">
                   Price
                 </p>
                 <p className="text-[14px] text-[#343434] font-bold">
                 {activeEvent?.price}
                 </p>
-              </div>
+              </div> */}
               <div className="py-[16px] px-[32px] flex items-center justify-between ">
                 <p className="text-[14px] text-[#343434] font-semibold">
                   Status
