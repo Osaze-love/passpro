@@ -17,6 +17,7 @@ import useOrganizer from "@/hooks/organizer";
 import BarLoader from "react-spinners/BarLoader";
 import { updateActiveTicket } from "@/redux/slices/supportslice";
 import { updateActiveWithdrawal } from "@/redux/slices/withdrawslice";
+import useSupport from "@/hooks/support";
 
 const Navbar = () => {
   const { usersDetail } = useSelector((state: RootState) => state.user);
@@ -28,6 +29,7 @@ const Navbar = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { getOneOrganizer, oneLoading, getOneWithdrawalCount } = useOrganizer();
+  const { getSupportTicketDetails } = useSupport()
 
 
   const handleSearch = async () => {
@@ -170,6 +172,8 @@ const Navbar = () => {
                                         className="p-2 bg-gray-100 rounded hover:bg-gray-200 cursor-pointer text-[12px]"
                                         onClick={() => {
                                            dispatch(updateActiveTicket(supportItem));
+                                          
+
                                            setShowDropdown(false);
                                            router.push("/support/reply");
                                         }}

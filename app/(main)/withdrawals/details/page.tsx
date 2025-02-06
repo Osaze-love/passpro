@@ -67,7 +67,7 @@ const Details = () => {
               </div>
               <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
                 <p className="text-[14px] text-[#343434] font-semibold">Trx Number</p>
-                <p className="text-[14px] text-[#343434] font-bold">-</p>
+                <p className="text-[14px] text-[#343434] w-2/4  text-right font-bold">{activeWithdrawal?.transaction_reference}</p>
               </div>
               <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
                 <p className="text-[14px] text-[#343434] font-semibold">
@@ -81,7 +81,7 @@ const Details = () => {
                 <p className="text-[14px] text-[#343434] font-semibold">
                   Full Name
                 </p>
-                <p className="text-[14px] text-[#FC6435] font-bold">
+                <p className="text-[14px] text-right text-[#FC6435] w-2/4 font-bold">
                   {activeWithdrawal?.user_full_name}
                 </p>
               </div>
@@ -89,7 +89,7 @@ const Details = () => {
                 <p className="text-[14px] text-[#343434] font-semibold">
                   Method
                 </p>
-                <p className="text-[14px] text-[#343434] font-bold">-</p>
+                <p className="text-[14px] text-[#343434] font-bold">Bank Transfer</p>
               </div>
               <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
                 <p className="text-[14px] text-[#343434] font-semibold">

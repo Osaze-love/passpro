@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { useRouter } from 'next/navigation';
 import useSupport from '@/hooks/support';
@@ -10,12 +10,15 @@ import BarLoader from 'react-spinners/BarLoader';
 
 const page = () => {
     const router = useRouter();
-    const {loading, replyTicket, updateTicketStatus} = useSupport();
-    const {activeTicket} = useSelector((state: RootState) => state.support);
+    const {loading, replyTicket, updateTicketStatus, getSupportTicketDetails} = useSupport();
+    const {activeTicket, activeTicketDetails} = useSelector((state: RootState) => state.support);
   const [replyData, setReplyData] = useState({
     message: '',
     attachments: [] as File[],
   });
+  useEffect(() => {
+  getSupportTicketDetails(activeTicket?.id)
+  },[])
 
   const handleAddAttachment = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -113,6 +116,13 @@ const page = () => {
         </button>
           }
           
+        </div>
+        <div className='flex flex-col items-left gap-[5px]'>
+          <h2 className='font-semibold text-[15px]'>Previous Messages</h2>
+          {activeTicketDetails.map((ticket, index) => (
+             <p key={index} className='text-[13px]'>{ticket.message}</p>
+          ))}
+          {activeTicketDetails.length < 1 && <p className='text-[13px]'>No previous message</p>} 
         </div>
         <Textarea
           className="focus-visible:ring-0 focus-visible:ring-transparent h-[140px] border-[#C4C4C4] shadow-sm placeholder:text-[#D9D9D9]"

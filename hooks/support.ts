@@ -3,7 +3,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateSupportPagination, updateSupportTickets } from "@/redux/slices/supportslice";
+import { updateActiveTicketDetails, updateSupportPagination, updateSupportTickets } from "@/redux/slices/supportslice";
 import { toast } from "./use-toast";
 import { resetState } from "@/redux/slices/userslice";
 
@@ -47,6 +47,31 @@ const useSupport = () => {
                total: pagination.total,
              })
            );
+    } catch (error: any) {
+       if (error.response?.data?.message === "Unauthenticated.") {
+                dispatch(resetState());
+              }else{
+                toast({
+                variant: "destructive",
+                title: "Uh oh! Something went wrong.",
+                description: error.response?.data?.message || 'An unexpected error occurred.', 
+              })
+              }
+    } finally {
+      setLoading(false);
+    }
+  };
+  const getSupportTicketDetails = async (ticketId: any) => {
+    setLoading(true);
+    try {
+      
+      const response = await axios.get(`${base_url}/support-tickets/${ticketId}`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      });
+   dispatch(updateActiveTicketDetails(response.data.messages))      
+     
     } catch (error: any) {
        if (error.response?.data?.message === "Unauthenticated.") {
                 dispatch(resetState());
@@ -157,6 +182,7 @@ const useSupport = () => {
     updateTicketStatus,
     deleteTicket,
     loading,
+    getSupportTicketDetails
   };
 };
 

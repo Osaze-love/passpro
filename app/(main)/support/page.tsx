@@ -36,7 +36,7 @@ import {
 
 
 const page = () => {
-  const { getSupportTickets, loading, deleteTicket } = useSupport();
+  const { getSupportTickets, loading, deleteTicket, getSupportTicketDetails } = useSupport();
   const {supportTickets, current_page,  last_page, per_page, total} = useSelector((state: RootState) => state.support);
   const from = (current_page - 1) * 10 + 1; 
 const to = Math.min(current_page * 10, total);
@@ -209,8 +209,9 @@ const to = Math.min(current_page * 10, total);
                    
                     <button
                       className="bg-none border border-[#FC6435] rounded-[8px] p-[10px] text-[#FC6435]  transition-all active:scale-95"
-                      onClick={() => {
-                        dispatch(updateActiveTicket(data))
+                      onClick={async() => {
+                        dispatch(updateActiveTicket(data));
+                       await getSupportTicketDetails(data?.id)
                         router.push("/support/reply");
                       }}
                     >

@@ -151,7 +151,7 @@ const OrganizerDetails = () => {
         <div className="flex items-center justify-between h-[100px] rounded-[8px] bg-[#089A47]">
           <div className="px-[18px]">
             <p className="text-white text-[14px]">Events</p>
-            <p className="text-[24px] text-white font-semibold mt-[11px]">{activeOrganizer?.events?.length}</p>
+            <p className="text-[24px] text-white font-semibold mt-[11px]">{activeOrganizer?.events_count}</p>
           </div>
           <div className="bg-[#28C76F]  px-[31px] h-full flex items-center justify-center rounded-tr-[8px] rounded-br-[8px]">
             <Image
@@ -183,7 +183,7 @@ const OrganizerDetails = () => {
         <div className="flex items-center justify-between h-[100px] rounded-[8px] bg-[#B1350F]">
           <div className="px-[18px]">
             <p className="text-white text-[14px]">Transactions</p>
-            <p className="text-[24px] text-white font-semibold mt-[11px]">{activeOrganizer?.transactions?.length}</p>
+            <p className="text-[24px] text-white font-semibold mt-[11px]">{activeOrganizer?.transactions_count}</p>
           </div>
           <div className="bg-[#D54113] px-[31px] h-full flex items-center justify-center rounded-tr-[8px] rounded-br-[8px]">
             <Image

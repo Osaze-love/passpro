@@ -4,6 +4,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 const initialState = {
   supportTickets: [] as any[], 
   activeTicket: {} as any,
+  activeTicketDetails: [] as any[],
   current_page: 1,
 last_page: 0,
 per_page: 10,
@@ -21,6 +22,9 @@ export const supportslice = createSlice({
       updateActiveTicket: (state, action: PayloadAction<any>) => {
         state.activeTicket = action.payload;
       },
+      updateActiveTicketDetails: (state, action: PayloadAction<any>) => {
+        state.activeTicketDetails = action.payload;
+      },
       updateSupportPagination: (state, action: PayloadAction<any>) => {
         state.current_page = action.payload.current_page;
         state.last_page = action.payload.last_page;
@@ -35,7 +39,8 @@ export const supportslice = createSlice({
 export const {
  updateSupportTickets,
  updateActiveTicket,
- updateSupportPagination
+ updateSupportPagination, 
+ updateActiveTicketDetails
 //  updateUserToken,
 } = supportslice.actions;
 

@@ -140,7 +140,7 @@ const ManageOrganizer = () => {
           </Button>
         ))}
       </section>
-      <section className="mt-[40px] max-w-[58rem] mx-auto">
+      <section className="mt-[40px] mx-auto">
   <div className="overflow-x-auto scrollbar-hide">
     <Table className="border-b max-w-full">
       <TableCaption></TableCaption>
