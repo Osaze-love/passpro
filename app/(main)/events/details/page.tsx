@@ -154,24 +154,7 @@ const Details = () => {
                 {activeEvent?.end_date}
                 </p>
               </div>
-              <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
-                <p className="text-[14px] text-[#343434] font-semibold">
-                  Seats
-                </p>
-                <p className="text-[14px] text-[#343434] font-bold">-</p>
-              </div>
-              <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
-                <p className="text-[14px] text-[#343434] font-semibold">
-                  Seats Booked
-                </p>
-                <p className="text-[14px] text-[#343434] font-bold">-</p>
-              </div>
-              <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
-                <p className="text-[14px] text-[#343434] font-semibold">
-                  Speakers
-                </p>
-                <p className="text-[14px] text-[#343434] font-bold">-</p>
-              </div>
+            
               <div className="py-[16px] px-[32px] flex items-center justify-between border-b">
                 <p className="text-[14px] text-[#343434] font-semibold">
                   Featured
