@@ -57,14 +57,12 @@ const page = () => {
     const formData = new FormData();
     formData.append('message', replyData.message);
   
-    // Only append the 'attachments' field if there are files
     if (replyData.attachments.length > 0) {
       replyData.attachments.forEach((file) => {
-        formData.append('attachments', file); // Append all files under 'attachments'
+        formData.append('attachment[]', file); 
       });
     }
   
-    // Send `formData` to the hook
     await replyTicket(activeTicket?.id, formData);
   };
   
