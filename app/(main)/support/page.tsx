@@ -164,7 +164,7 @@ const to = Math.min(current_page * 10, total);
             {supportTickets?.map((data, index) => (
               <TableRow key={index}>
                  <TableCell className="font-medium h-[75px] text-[#FC6435] border-l">
-                  {data?.id}
+                  {data?.ticket_code}
                 
                 </TableCell>
                 <TableCell className="font-medium h-[75px] text-[#FC6435] ">
